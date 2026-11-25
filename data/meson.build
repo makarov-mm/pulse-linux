@@ -29,3 +29,17 @@ appstreamcli = find_program('appstreamcli', required: false)
 if appstreamcli.found()
   test('validate-metainfo', appstreamcli, args: ['validate', '--no-net', '--explain', metainfo_file])
 endif
+
+install_data(
+  app_id + '.gschema.xml',
+  install_dir: datadir / 'glib-2.0' / 'schemas',
+)
+
+glib_compile_schemas = find_program('glib-compile-schemas', required: false)
+if glib_compile_schemas.found()
+  test(
+    'validate-schema',
+    glib_compile_schemas,
+    args: ['--strict', '--dry-run', meson.current_source_dir()],
+  )
+endif

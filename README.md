@@ -26,7 +26,7 @@ cargo run
 cargo test
 ```
 
-`cargo run` shows the English interface. Translations, the desktop entry and the icon are installed by Meson:
+`cargo run` shows the English interface and does not remember the window size or the view options. Translations, the settings schema, the desktop entry and the icon are installed by Meson:
 
 ```sh
 sudo apt install meson ninja-build gettext desktop-file-utils appstream

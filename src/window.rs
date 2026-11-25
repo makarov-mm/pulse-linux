@@ -9,6 +9,7 @@ use gtk::{gio, glib};
 
 use crate::format;
 use crate::i18n::{tr, trf, trn};
+use crate::settings;
 use crate::telemetry::{self, Frame, Sampler, sockets};
 use crate::ui::{
     ConnectionsPage, DevicesPage, MetricCard, ProcessList, ProcessObject, SpacePage, StartupPage,
@@ -20,7 +21,7 @@ const PROCESSES_PAGE: &str = "processes";
 const CONNECTIONS_PAGE: &str = "connections";
 const STARTUP_PAGE: &str = "startup";
 /// Below this width the tabs move to the bottom and the cards form two rows.
-const NARROW_WIDTH: f64 = 900.0;
+const NARROW_WIDTH: f64 = 1000.0;
 /// Reading the socket tables walks every process's descriptors, so it runs less often than sampling.
 const SOCKET_INTERVAL: Duration = Duration::from_secs(2);
 
@@ -212,7 +213,13 @@ pub fn build(app: &adw::Application) -> adw::ApplicationWindow {
             }
         }
     });
-    add_actions(&window, &processes, &search_bar, &stack, &toasts);
+    let settings = settings::load();
+    if let Some(settings) = &settings {
+        settings.bind("window-width", &window, "default-width").build();
+        settings.bind("window-height", &window, "default-height").build();
+        settings.bind("window-maximized", &window, "maximized").build();
+    }
+    add_actions(&window, &processes, &search_bar, &stack, &toasts, settings.as_ref());
     start_sampling(&window, live);
     window
 }
@@ -229,12 +236,36 @@ fn arrange(grid: &gtk::Grid, cards: &[gtk::Box], columns: usize) {
     }
 }
 
+/// A menu item with a check mark. `name` is both the action and the settings key that remembers its state.
+fn toggle(
+    name: &'static str,
+    settings: Option<&gio::Settings>,
+    apply: impl Fn(bool) + 'static,
+) -> gio::ActionEntry<adw::ApplicationWindow> {
+    let initial = settings.is_some_and(|settings| settings.boolean(name));
+    apply(initial);
+    let settings = settings.cloned();
+    gio::ActionEntry::builder(name)
+        .state(initial.to_variant())
+        .activate(move |_: &adw::ApplicationWindow, action, _| {
+            let value = !action.state().and_then(|state| state.get::<bool>()).unwrap_or(false);
+            action.set_state(&value.to_variant());
+            apply(value);
+            if let Some(settings) = &settings {
+                // A read-only backend only costs the memory of the choice.
+                let _ = settings.set_boolean(name, value);
+            }
+        })
+        .build()
+}
+
 fn add_actions(
     window: &adw::ApplicationWindow,
     processes: &Rc<ProcessList>,
     search_bar: &gtk::SearchBar,
     stack: &adw::ViewStack,
     toasts: &adw::ToastOverlay,
+    settings: Option<&gio::Settings>,
 ) {
     let search = gio::ActionEntry::builder("search")
         .activate({
@@ -255,28 +286,14 @@ fn add_actions(
             }
         })
         .build();
-    let show_kernel_threads = gio::ActionEntry::builder("show-kernel-threads")
-        .state(false.to_variant())
-        .activate({
-            let processes = processes.clone();
-            move |_: &adw::ApplicationWindow, action, _| {
-                let show = !action.state().and_then(|state| state.get::<bool>()).unwrap_or(false);
-                action.set_state(&show.to_variant());
-                processes.set_show_kernel_threads(show);
-            }
-        })
-        .build();
-    let show_process_tree = gio::ActionEntry::builder("show-process-tree")
-        .state(false.to_variant())
-        .activate({
-            let processes = processes.clone();
-            move |_: &adw::ApplicationWindow, action, _| {
-                let tree = !action.state().and_then(|state| state.get::<bool>()).unwrap_or(false);
-                action.set_state(&tree.to_variant());
-                processes.set_tree(tree);
-            }
-        })
-        .build();
+    let show_kernel_threads = toggle("show-kernel-threads", settings, {
+        let processes = processes.clone();
+        move |show| processes.set_show_kernel_threads(show)
+    });
+    let show_process_tree = toggle("show-process-tree", settings, {
+        let processes = processes.clone();
+        move |tree| processes.set_tree(tree)
+    });
     window.add_action_entries([search, end_process, show_kernel_threads, show_process_tree]);
 
     // Ending is only offered while a row is selected.

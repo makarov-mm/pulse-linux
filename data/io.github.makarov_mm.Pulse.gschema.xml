@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="pulse">
+  <schema id="io.github.makarov_mm.Pulse" path="/io/github/makarov_mm/Pulse/">
+    <key name="window-width" type="i">
+      <default>1100</default>
+      <summary>Window width</summary>
+    </key>
+    <key name="window-height" type="i">
+      <default>760</default>
+      <summary>Window height</summary>
+    </key>
+    <key name="window-maximized" type="b">
+      <default>false</default>
+      <summary>Whether the window is maximized</summary>
+    </key>
+    <key name="show-kernel-threads" type="b">
+      <default>false</default>
+      <summary>Show kernel threads in the process table</summary>
+    </key>
+    <key name="show-process-tree" type="b">
+      <default>false</default>
+      <summary>Show the process table as a tree</summary>
+    </key>
+  </schema>
+</schemalist>

@@ -2,6 +2,7 @@
 
 mod format;
 mod i18n;
+mod settings;
 mod telemetry;
 mod ui;
 mod window;
