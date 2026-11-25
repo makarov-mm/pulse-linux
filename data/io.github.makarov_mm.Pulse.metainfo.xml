@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.makarov_mm.Pulse</id>
+  <name>Pulse</name>
+  <summary>Watch processes and system resources</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <developer id="io.github.makarov_mm">
+    <name>Mykhailo Makarov</name>
+  </developer>
+  <description>
+    <p>Pulse shows processor, memory, disk and network load together with the processes behind it.</p>
+  </description>
+  <launchable type="desktop-id">io.github.makarov_mm.Pulse.desktop</launchable>
+  <url type="homepage">https://github.com/makarov-mm/pulse-linux</url>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="0.1.0" date="2026-11-25"/>
+  </releases>
+</component>

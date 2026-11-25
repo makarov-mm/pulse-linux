@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Pulse
+GenericName=System Monitor
+Comment=Watch processes and system resources
+Exec=pulse
+Icon=io.github.makarov_mm.Pulse
+Terminal=false
+Categories=System;Monitor;GTK;
+Keywords=process;task;manager;cpu;memory;disk;network;
+StartupNotify=true
