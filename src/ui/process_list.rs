@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use std::cell::RefCell;
+use std::cell::{Cell as StdCell, RefCell};
 use std::collections::{HashMap, HashSet};
+use std::rc::Rc;
 
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -14,9 +15,9 @@ use crate::telemetry::{ProcessKey, ProcessSample};
 mod imp {
     use std::cell::{Cell, RefCell};
 
-    use gtk::glib;
     use gtk::prelude::*;
     use gtk::subclass::prelude::*;
+    use gtk::{gio, glib};
 
     /// One row of the process table. The table reads it through its properties,
     /// so a changed value redraws only the cell that shows it.
@@ -47,7 +48,17 @@ mod imp {
         /// Everything the search box matches against.
         #[property(get, set)]
         search: RefCell<String>,
+        /// Whether the table is a tree. Rows without children then leave room for the arrow of their siblings.
+        #[property(get, set)]
+        in_tree: Cell<bool>,
         pub start_time: Cell<u64>,
+        pub parent: Cell<i32>,
+        /// The processes shown below this one in the tree.
+        pub children: RefCell<Option<gio::ListStore>>,
+        /// The list this row is in: the top level or the children of another row.
+        pub container: RefCell<Option<gio::ListStore>>,
+        /// Whether the row was given to the tree with children. A tree row cannot change that afterwards.
+        pub expandable: Cell<bool>,
     }
 
     #[glib::object_subclass]
@@ -78,6 +89,7 @@ impl ProcessObject {
             )
             .build();
         object.imp().start_time.set(sample.key.start_time);
+        object.imp().children.replace(Some(gio::ListStore::new::<Self>()));
         object.refresh(sample);
         object
     }
@@ -89,8 +101,23 @@ impl ProcessObject {
         }
     }
 
+    fn children(&self) -> gio::ListStore {
+        self.imp().children.borrow().clone().expect("set at construction")
+    }
+
+    /// Takes the row out of the list it is in.
+    fn detach(&self) {
+        if let Some(container) = self.imp().container.take()
+            && let Some(position) = container.find(self)
+        {
+            container.remove(position);
+        }
+    }
+
     /// Only values that changed are set, so unchanged cells are not redrawn.
     fn refresh(&self, sample: &ProcessSample) {
+        // A process whose parent exits is adopted by another one.
+        self.imp().parent.set(sample.parent);
         let cpu = sample.cpu.unwrap_or(-1.0);
         if self.cpu() != cpu {
             self.set_cpu(cpu);
@@ -132,7 +159,9 @@ fn tooltip(command: &str) -> String {
 pub struct ProcessList {
     root: gtk::ScrolledWindow,
     view: gtk::ColumnView,
+    /// The top level: every process in the flat table, the ones without a listed parent in the tree.
     store: gio::ListStore,
+    tree: Rc<StdCell<bool>>,
     search: gtk::StringFilter,
     /// Hides kernel threads while it is part of `filters`.
     user_only: gtk::BoolFilter,
@@ -145,18 +174,24 @@ impl ProcessList {
     pub fn new() -> Self {
         let store = gio::ListStore::new::<ProcessObject>();
         let search = gtk::StringFilter::builder()
-            .expression(property("search"))
+            .expression(row_property("search"))
             .ignore_case(true)
             .match_mode(gtk::StringFilterMatchMode::Substring)
             .build();
         let user_only = gtk::BoolFilter::builder()
-            .expression(property("kernel"))
+            .expression(row_property("kernel"))
             .invert(true)
             .build();
         let filters = gtk::EveryFilter::new();
         filters.append(search.clone());
         filters.append(user_only.clone());
-        let filtered = gtk::FilterListModel::new(Some(store.clone()), Some(filters.clone()));
+        // The table always shows tree rows. While the tree is off no row has children, which makes it a flat list.
+        let tree = Rc::new(StdCell::new(false));
+        let rows = gtk::TreeListModel::new(store.clone(), false, true, |item| {
+            let process = item.downcast_ref::<ProcessObject>()?;
+            process.imp().expandable.get().then(|| process.children().upcast())
+        });
+        let filtered = gtk::FilterListModel::new(Some(rows), Some(filters.clone()));
         let sorted = gtk::SortListModel::new(Some(filtered), None::<gtk::Sorter>);
         let selection = gtk::SingleSelection::builder()
             .model(&sorted)
@@ -217,8 +252,9 @@ impl ProcessList {
             view.append_column(column);
         }
 
-        // The view's own sorter follows the column headers the user clicks.
-        sorted.set_sorter(view.sorter().as_ref());
+        // The view's own sorter follows the column headers the user clicks. Wrapped like this it orders
+        // the children of each row among themselves and keeps them below their parent.
+        sorted.set_sorter(Some(&gtk::TreeListRowSorter::new(view.sorter())));
         view.sort_by_column(Some(&cpu), gtk::SortType::Descending);
 
         let root = gtk::ScrolledWindow::builder()
@@ -230,6 +266,7 @@ impl ProcessList {
             root,
             view,
             store,
+            tree,
             search,
             user_only,
             filters,
@@ -252,20 +289,22 @@ impl ProcessList {
             match objects.get(&sample.key) {
                 Some(object) => object.refresh(sample),
                 None => {
-                    let object = ProcessObject::new(sample);
-                    self.store.append(&object);
-                    objects.insert(sample.key, object);
+                    objects.insert(sample.key, ProcessObject::new(sample));
                 }
             }
         }
         if objects.len() != alive.len() {
-            objects.retain(|key, _| alive.contains(key));
-            self.store.retain(|object| {
-                object
-                    .downcast_ref::<ProcessObject>()
-                    .is_some_and(|process| alive.contains(&process.key()))
+            objects.retain(|key, object| {
+                let keep = alive.contains(key);
+                if !keep {
+                    object.detach();
+                }
+                keep
             });
         }
+        let selected = self.selected().map(|process| process.key());
+        self.arrange(&objects);
+        self.reselect(selected);
         // Sort models do not watch item properties, so the new values are announced here.
         if let Some(sorter) = self.view.sorter() {
             sorter.changed(gtk::SorterChange::Different);
@@ -285,15 +324,72 @@ impl ProcessList {
         }
     }
 
+    /// Shows the processes below their parents, or as a flat list.
+    pub fn set_tree(&self, tree: bool) {
+        if self.tree.replace(tree) != tree {
+            let selected = self.selected().map(|process| process.key());
+            self.arrange(&self.objects.borrow());
+            self.reselect(selected);
+        }
+    }
+
+    /// Puts every row into the list it belongs to: the children of its parent in the tree,
+    /// the top level otherwise. Rows already in place are left alone.
+    fn arrange(&self, objects: &HashMap<ProcessKey, ProcessObject>) {
+        let mut parents: HashMap<i32, (&ProcessObject, bool)> = HashMap::new();
+        if self.tree.get() {
+            parents.extend(objects.values().map(|object| (object.pid(), (object, false))));
+            for object in objects.values() {
+                if let Some((_, has_children)) = parents.get_mut(&object.imp().parent.get()) {
+                    *has_children = true;
+                }
+            }
+        }
+        for object in objects.values() {
+            if object.in_tree() != self.tree.get() {
+                object.set_in_tree(self.tree.get());
+            }
+            let state = object.imp();
+            let container = match parents.get(&state.parent.get()) {
+                Some((parent, _)) => parent.children(),
+                None => self.store.clone(),
+            };
+            let expandable = parents
+                .get(&object.pid())
+                .is_some_and(|(_, has_children)| *has_children);
+            // A tree row is asked for its children once, so a row that gains its first child
+            // or loses its last one has to be inserted anew.
+            if state.container.borrow().as_ref() != Some(&container) || state.expandable.get() != expandable {
+                object.detach();
+                state.expandable.set(expandable);
+                container.append(object);
+                state.container.replace(Some(container));
+            }
+        }
+    }
+
+    /// Selects the row of `key` again after it was moved to another list, which drops the selection.
+    fn reselect(&self, key: Option<ProcessKey>) {
+        let Some(key) = key else { return };
+        if self.selected().is_some_and(|process| process.key() == key) {
+            return;
+        }
+        let position = (0..self.selection.n_items())
+            .find(|&position| process_at(&self.selection, position).is_some_and(|process| process.key() == key));
+        if let Some(position) = position {
+            self.selection.set_selected(position);
+        }
+    }
+
     pub fn selected(&self) -> Option<ProcessObject> {
-        self.selection.selected_item().and_downcast()
+        process_of(self.selection.selected_item())
     }
 
     /// Calls `callback` when a row is activated: double-clicked, or Enter is pressed on it.
     pub fn connect_activated(&self, callback: impl Fn(ProcessObject) + 'static) {
         let selection = self.selection.clone();
         self.view.connect_activate(move |_, position| {
-            if let Some(process) = selection.item(position).and_downcast() {
+            if let Some(process) = process_at(&selection, position) {
                 callback(process);
             }
         });
@@ -301,13 +397,28 @@ impl ProcessList {
 
     pub fn connect_selection_changed(&self, callback: impl Fn(Option<ProcessObject>) + 'static) {
         self.selection.connect_selected_item_notify(move |selection| {
-            callback(selection.selected_item().and_downcast());
+            callback(process_of(selection.selected_item()));
         });
     }
 }
 
+/// The process shown by a row of the table's model.
+fn process_of(row: Option<glib::Object>) -> Option<ProcessObject> {
+    row.and_downcast::<gtk::TreeListRow>()?.item().and_downcast()
+}
+
+fn process_at(selection: &gtk::SingleSelection, position: u32) -> Option<ProcessObject> {
+    process_of(selection.item(position))
+}
+
 fn property(name: &str) -> gtk::PropertyExpression {
     gtk::PropertyExpression::new(ProcessObject::static_type(), gtk::Expression::NONE, name)
+}
+
+/// `property` for filters, which see the tree rows instead of the processes.
+fn row_property(name: &str) -> gtk::PropertyExpression {
+    gtk::PropertyExpression::new(gtk::TreeListRow::static_type(), gtk::Expression::NONE, "item")
+        .chain_property::<ProcessObject>(name)
 }
 
 fn numeric_sorter(name: &str) -> gtk::NumericSorter {
@@ -349,10 +460,26 @@ fn column(
         if cell == Cell::Number {
             label.add_css_class("numeric");
         }
-        item.set_child(Some(&label));
-        text(item.property_expression("item")).bind(&label, "label", gtk::Widget::NONE);
-        if let Some(tooltip) = tooltip {
+        if cell == Cell::Wide {
+            // The first column draws the tree: indentation and the arrow that folds a row's children.
+            let expander = gtk::TreeExpander::builder().child(&label).build();
+            item.set_child(Some(&expander));
             item.property_expression("item")
+                .bind(&expander, "list-row", gtk::Widget::NONE);
+            item.property_expression("item")
+                .chain_property::<gtk::TreeListRow>("item")
+                .chain_property::<ProcessObject>("in-tree")
+                .bind(&expander, "indent-for-icon", gtk::Widget::NONE);
+        } else {
+            item.set_child(Some(&label));
+        }
+        let process = || {
+            item.property_expression("item")
+                .chain_property::<gtk::TreeListRow>("item")
+        };
+        text(process()).bind(&label, "label", gtk::Widget::NONE);
+        if let Some(tooltip) = tooltip {
+            process()
                 .chain_property::<ProcessObject>(tooltip)
                 .bind(&label, "tooltip-text", gtk::Widget::NONE);
         }

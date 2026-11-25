@@ -137,6 +137,7 @@ pub fn build(app: &adw::Application) -> adw::ApplicationWindow {
         .action_name("win.end-process")
         .build();
     let menu = gio::Menu::new();
+    menu.append(Some(&tr("Show as _Tree")), Some("win.show-process-tree"));
     menu.append(Some(&tr("Show _Kernel Threads")), Some("win.show-kernel-threads"));
     menu.append(Some(&tr("_About Pulse")), Some("app.about"));
     let menu_button = gtk::MenuButton::builder()
@@ -265,7 +266,18 @@ fn add_actions(
             }
         })
         .build();
-    window.add_action_entries([search, end_process, show_kernel_threads]);
+    let show_process_tree = gio::ActionEntry::builder("show-process-tree")
+        .state(false.to_variant())
+        .activate({
+            let processes = processes.clone();
+            move |_: &adw::ApplicationWindow, action, _| {
+                let tree = !action.state().and_then(|state| state.get::<bool>()).unwrap_or(false);
+                action.set_state(&tree.to_variant());
+                processes.set_tree(tree);
+            }
+        })
+        .build();
+    window.add_action_entries([search, end_process, show_kernel_threads, show_process_tree]);
 
     // Ending is only offered while a row is selected.
     let set_end_enabled = {

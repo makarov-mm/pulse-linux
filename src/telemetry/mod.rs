@@ -31,6 +31,8 @@ pub struct ProcessKey {
 #[derive(Clone, Debug)]
 pub struct ProcessSample {
     pub key: ProcessKey,
+    /// PID of the parent, 0 for the processes the kernel started.
+    pub parent: i32,
     pub name: String,
     pub user: Arc<str>,
     /// The command line, or the bracketed name for a kernel thread.
@@ -173,6 +175,7 @@ impl Sampler {
             );
             frame.processes.push(ProcessSample {
                 key: stat.key,
+                parent: stat.parent,
                 name: stat.name,
                 user: self.users.name(stat.uid),
                 command,

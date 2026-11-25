@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pulse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 00:01+0100\n"
+"POT-Creation-Date: 2026-11-26 00:14+0100\n"
 "PO-Revision-Date: 2026-11-25 23:38+0100\n"
 "Last-Translator: Mykhailo Makarov\n"
 "Language-Team: Russian\n"
@@ -119,15 +119,15 @@ msgstr "Прослушивание"
 msgid "Closing"
 msgstr "Закрывается"
 
-#: src/window.rs:39 src/ui/process_list.rs:188
+#: src/window.rs:39 src/ui/process_list.rs:223
 msgid "CPU"
 msgstr "ЦП"
 
-#: src/window.rs:40 src/ui/process_list.rs:195
+#: src/window.rs:40 src/ui/process_list.rs:230
 msgid "Memory"
 msgstr "Память"
 
-#: src/window.rs:41 src/ui/process_list.rs:202
+#: src/window.rs:41 src/ui/process_list.rs:237
 msgid "Disk"
 msgstr "Диск"
 
@@ -168,44 +168,48 @@ msgid "End Process"
 msgstr "Завершить процесс"
 
 #: src/window.rs:140
+msgid "Show as _Tree"
+msgstr "Показывать _деревом"
+
+#: src/window.rs:141
 msgid "Show _Kernel Threads"
 msgstr "Показывать потоки _ядра"
 
-#: src/window.rs:141
+#: src/window.rs:142
 msgid "_About Pulse"
 msgstr "_О приложении Pulse"
 
-#: src/window.rs:144
+#: src/window.rs:145
 msgid "Main Menu"
 msgstr "Главное меню"
 
-#: src/window.rs:339
+#: src/window.rs:351
 msgid "{0} process"
 msgid_plural "{0} processes"
 msgstr[0] "{0} процесс"
 msgstr[1] "{0} процесса"
 msgstr[2] "{0} процессов"
 
-#: src/window.rs:340
+#: src/window.rs:352
 msgid "{0} thread"
 msgid_plural "{0} threads"
 msgstr[0] "{0} поток"
 msgstr[1] "{0} потока"
 msgstr[2] "{0} потоков"
 
-#: src/window.rs:349
+#: src/window.rs:361
 msgid "{0} of {1}"
 msgstr "{0} из {1}"
 
-#: src/window.rs:362
+#: src/window.rs:374
 msgid "Read {0} · Write {1}"
 msgstr "Чтение {0} · Запись {1}"
 
-#: src/window.rs:381
+#: src/window.rs:393
 msgid "End “{0}”?"
 msgstr "Завершить «{0}»?"
 
-#: src/window.rs:383
+#: src/window.rs:395
 msgid ""
 "Process {0} will be asked to exit. Force Stop ends it at once, without "
 "letting it save anything."
@@ -213,19 +217,19 @@ msgstr ""
 "Процессу {0} будет отправлена просьба завершиться. «Остановить "
 "принудительно» завершает его сразу, не давая ничего сохранить."
 
-#: src/window.rs:388
+#: src/window.rs:400
 msgid "_Cancel"
 msgstr "_Отмена"
 
-#: src/window.rs:389
+#: src/window.rs:401
 msgid "_Force Stop"
 msgstr "Остановить _принудительно"
 
-#: src/window.rs:390
+#: src/window.rs:402
 msgid "_End Process"
 msgstr "_Завершить процесс"
 
-#: src/window.rs:403
+#: src/window.rs:415
 msgid "Could not end “{0}”: {1}"
 msgstr "Не удалось завершить «{0}»: {1}"
 
@@ -234,7 +238,7 @@ msgid "Process"
 msgstr "Процесс"
 
 #: src/ui/connections_page.rs:123 src/ui/process_details.rs:66
-#: src/ui/process_list.rs:182
+#: src/ui/process_list.rs:217
 msgid "PID"
 msgstr "PID"
 
@@ -290,7 +294,7 @@ msgstr "Запись"
 msgid "“{0}” has exited."
 msgstr "Процесс «{0}» завершился."
 
-#: src/ui/process_details.rs:67 src/ui/process_list.rs:187
+#: src/ui/process_details.rs:67 src/ui/process_list.rs:222
 msgid "User"
 msgstr "Пользователь"
 
@@ -346,11 +350,11 @@ msgstr "Остановлен"
 msgid "Zombie"
 msgstr "Зомби"
 
-#: src/ui/process_list.rs:176 src/ui/space_page.rs:488
+#: src/ui/process_list.rs:211 src/ui/space_page.rs:494
 msgid "Name"
 msgstr "Имя"
 
-#: src/ui/process_list.rs:209
+#: src/ui/process_list.rs:244
 msgid "Threads"
 msgstr "Потоки"
 
@@ -377,51 +381,51 @@ msgstr "Файловая система"
 msgid "Folder to scan"
 msgstr "Папка для сканирования"
 
-#: src/ui/space_page.rs:151
+#: src/ui/space_page.rs:153
 msgid "Choose Folder…"
 msgstr "Выбрать папку…"
 
-#: src/ui/space_page.rs:153 src/ui/space_page.rs:347
+#: src/ui/space_page.rs:156 src/ui/space_page.rs:353
 msgid "Scan"
 msgstr "Сканировать"
 
-#: src/ui/space_page.rs:158
+#: src/ui/space_page.rs:161
 msgid "Parent Folder"
 msgstr "Родительская папка"
 
-#: src/ui/space_page.rs:162
+#: src/ui/space_page.rs:165
 msgid "Choose a folder and press Scan."
 msgstr "Выберите папку и нажмите «Сканировать»."
 
-#: src/ui/space_page.rs:316
+#: src/ui/space_page.rs:322
 msgid "Could not start the scan: {0}"
 msgstr "Не удалось начать сканирование: {0}"
 
-#: src/ui/space_page.rs:329
+#: src/ui/space_page.rs:335
 msgid "Cancel"
 msgstr "Отмена"
 
-#: src/ui/space_page.rs:355
+#: src/ui/space_page.rs:361
 msgid "Choose a Folder to Scan"
 msgstr "Выбор папки для сканирования"
 
-#: src/ui/space_page.rs:456
+#: src/ui/space_page.rs:462
 msgid "Scanning…"
 msgstr "Сканирование…"
 
-#: src/ui/space_page.rs:457
+#: src/ui/space_page.rs:463
 msgid "Cancelled"
 msgstr "Отменено"
 
-#: src/ui/space_page.rs:458
+#: src/ui/space_page.rs:464
 msgid "Some folders could not be read"
 msgstr "Некоторые папки не удалось прочитать"
 
-#: src/ui/space_page.rs:512
+#: src/ui/space_page.rs:518
 msgid "Size on Disk"
 msgstr "Размер на диске"
 
-#: src/ui/space_page.rs:547
+#: src/ui/space_page.rs:553
 msgid "Share"
 msgstr "Доля"
 

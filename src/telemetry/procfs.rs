@@ -44,6 +44,7 @@ pub struct Device {
 pub struct ProcessStat {
     pub key: ProcessKey,
     pub name: String,
+    pub parent: i32,
     pub uid: u32,
     pub kernel: bool,
     pub cpu_ticks: u64,
@@ -237,6 +238,7 @@ fn process(pid: i32) -> Option<ProcessStat> {
             start_time: number(22)?,
         },
         name,
+        parent: number(4)? as i32,
         // The directory belongs to the effective user of the process.
         uid: fs::metadata(&directory).ok()?.uid(),
         kernel: number(9)? & KERNEL_THREAD != 0,

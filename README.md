@@ -4,7 +4,7 @@ A process and resource monitor built with Rust, GTK 4 and libadwaita.
 
 | Tab | What it shows |
 |---|---|
-| Processes | Every process with its user, CPU, memory, disk I/O and threads. Sort by any column, search by name, PID, user or command line, end a process, and open a row for its details: state, parent, start time, executable and working folder. |
+| Processes | Every process with its user, CPU, memory, disk I/O and threads. Show them as a flat list or as a tree of parents and children. Sort by any column, search by name, PID, user or command line, end a process, and open a row for its details: state, parent, start time, executable and working folder. |
 | Devices | Load per processor, per physical disk and per network interface. |
 | Connections | Open TCP and UDP sockets with their addresses, state and the process that holds each. |
 | Disk Space | The folders and files that take up the space under a folder you choose, as a map and a list, with drill-down. |
