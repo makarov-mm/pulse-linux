@@ -35,6 +35,7 @@ mod imp {
         threads: Cell<u32>,
         #[property(get, set)]
         user: RefCell<String>,
+        /// The command line, shortened to what a tooltip can show.
         #[property(get, set)]
         command: RefCell<String>,
         /// Bytes per second read and written. Negative while it is unknown or unreadable.
@@ -68,7 +69,7 @@ impl ProcessObject {
             .property("pid", sample.key.pid)
             .property("name", &sample.name)
             .property("user", &*sample.user)
-            .property("command", &*sample.command)
+            .property("command", tooltip(&sample.command))
             .property("kernel", sample.kernel)
             .property(
                 "search",
@@ -108,6 +109,22 @@ impl ProcessObject {
             self.set_name(sample.name.as_str());
         }
     }
+}
+
+/// Longest command line shown in a tooltip. GTK lays a tooltip out as one window,
+/// and a command of many kilobytes makes that window larger than a renderer can draw.
+const TOOLTIP_CHARS: usize = 400;
+
+fn tooltip(command: &str) -> String {
+    let mut text: String = command
+        .chars()
+        .take(TOOLTIP_CHARS)
+        .map(|c| if c.is_control() { ' ' } else { c })
+        .collect();
+    if command.chars().nth(TOOLTIP_CHARS).is_some() {
+        text.push('…');
+    }
+    text
 }
 
 /// The sortable, searchable table of processes.
