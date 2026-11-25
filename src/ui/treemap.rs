@@ -7,6 +7,7 @@ use gtk::prelude::*;
 use gtk::{cairo, gdk, pango};
 
 use crate::format;
+use crate::i18n::trn;
 
 /// Tiles drawn individually. Smaller items share one last tile.
 const TILE_LIMIT: usize = 60;
@@ -80,7 +81,11 @@ impl Treemap {
                 };
                 let text = match index {
                     Some(index) => format!("{}\n{}", items[index].label, format::bytes(items[index].size as f64)),
-                    None => format!("{} smaller items", items.len().saturating_sub(TILE_LIMIT)),
+                    None => trn(
+                        "{0} smaller item",
+                        "{0} smaller items",
+                        items.len().saturating_sub(TILE_LIMIT),
+                    ),
                 };
                 tooltip.set_text(Some(&text));
                 true

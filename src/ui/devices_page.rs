@@ -6,6 +6,7 @@ use gtk::prelude::*;
 
 use super::metric_card::MetricCard;
 use crate::format;
+use crate::i18n::{tr, trf};
 use crate::telemetry::{DeviceSample, Frame};
 
 /// What one tile shows for one sample.
@@ -92,9 +93,9 @@ pub struct DevicesPage {
 
 impl DevicesPage {
     pub fn new() -> Self {
-        let processors = Group::new("Processors", Some(100.0));
-        let disks = Group::new("Disks", None);
-        let interfaces = Group::new("Network Interfaces", None);
+        let processors = Group::new(&tr("Processors"), Some(100.0));
+        let disks = Group::new(&tr("Disks"), None);
+        let interfaces = Group::new(&tr("Network Interfaces"), None);
 
         let content = gtk::Box::builder()
             .orientation(gtk::Orientation::Vertical)
@@ -126,14 +127,14 @@ impl DevicesPage {
                 .cores
                 .iter()
                 .map(|core| Reading {
-                    name: format!("CPU {}", core.number),
+                    name: trf("CPU {0}", &[&core.number]),
                     value: core.usage,
                     text: format::percent(core.usage),
                     caption: String::new(),
                 })
                 .collect(),
         );
-        self.disks.sync(transfers(&frame.disks, "Read", "Write"));
+        self.disks.sync(transfers(&frame.disks, &tr("Read"), &tr("Write")));
         self.interfaces.sync(transfers(&frame.interfaces, "↓", "↑"));
     }
 }

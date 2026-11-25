@@ -7,6 +7,7 @@ use gtk::prelude::*;
 use gtk::{gio, glib};
 
 use super::table::{number_column, text_column};
+use crate::i18n::tr;
 use crate::telemetry::sockets::Socket;
 
 mod imp {
@@ -67,8 +68,13 @@ impl ConnectionObject {
 
     /// The addresses of a socket never change. Its state and the process found for it can.
     fn refresh(&self, socket: &Socket) {
-        if self.state() != socket.state {
-            self.set_state(socket.state);
+        let state = if socket.state.is_empty() {
+            String::new()
+        } else {
+            tr(socket.state)
+        };
+        if self.state() != state {
+            self.set_state(state);
         }
         let pid = socket.pid.unwrap_or(-1);
         if self.pid() != pid || self.pid_text().is_empty() {
@@ -112,13 +118,13 @@ impl ConnectionsPage {
             .css_classes(["data-table"])
             .build();
 
-        let process = text_column::<ConnectionObject>("Process", "process", true);
+        let process = text_column::<ConnectionObject>(&tr("Process"), "process", true);
         view.append_column(&process);
-        view.append_column(&number_column::<ConnectionObject>("PID", "pid-text", "pid"));
-        view.append_column(&text_column::<ConnectionObject>("Protocol", "protocol", false));
-        view.append_column(&text_column::<ConnectionObject>("Local Address", "local", true));
-        view.append_column(&text_column::<ConnectionObject>("Remote Address", "remote", true));
-        view.append_column(&text_column::<ConnectionObject>("State", "state", false));
+        view.append_column(&number_column::<ConnectionObject>(&tr("PID"), "pid-text", "pid"));
+        view.append_column(&text_column::<ConnectionObject>(&tr("Protocol"), "protocol", false));
+        view.append_column(&text_column::<ConnectionObject>(&tr("Local Address"), "local", true));
+        view.append_column(&text_column::<ConnectionObject>(&tr("Remote Address"), "remote", true));
+        view.append_column(&text_column::<ConnectionObject>(&tr("State"), "state", false));
         sorted.set_sorter(view.sorter().as_ref());
         view.sort_by_column(Some(&process), gtk::SortType::Ascending);
 
@@ -128,7 +134,9 @@ impl ConnectionsPage {
             .child(&view)
             .build();
         let note = gtk::Label::builder()
-            .label("Sockets of other users' processes are listed without an owner unless Pulse runs as root.")
+            .label(tr(
+                "Sockets of other users’ processes are listed without an owner unless Pulse runs as root.",
+            ))
             .xalign(0.0)
             .wrap(true)
             .visible(false)

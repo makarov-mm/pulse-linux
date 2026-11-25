@@ -1,3 +1,4 @@
 target/
 builddir/
 *.bundle
+po/*.pot

@@ -10,6 +10,7 @@ repository = "https://github.com/makarov-mm/pulse-linux"
 [dependencies]
 adw = { version = "0.9.2", package = "libadwaita", features = ["v1_5"] }
 async-channel = "2.5.0"
+gettext-rs = { version = "0.8.0", features = ["gettext-system"] }
 gtk = { version = "0.11.5", package = "gtk4", features = ["v4_12"] }
 libc = "0.2.191"
 pangocairo = "0.22.9"

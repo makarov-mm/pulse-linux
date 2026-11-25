@@ -13,6 +13,7 @@ use gtk::{gio, glib, pango};
 
 use super::treemap::{Item, Treemap};
 use crate::format;
+use crate::i18n::{tr, trf, trn};
 use crate::telemetry::space::{Scan, SpaceNode};
 
 /// How often the list follows a running scan.
@@ -90,9 +91,9 @@ impl SpaceObject {
 /// What a node is called in the list and on the map.
 fn label(node: &SpaceNode) -> String {
     if node.grouped > 0 {
-        format!("{} smaller files", node.grouped)
+        trn("{0} smaller file", "{0} smaller files", node.grouped)
     } else if node.unread() {
-        format!("{} (not fully readable)", node.name)
+        trf("{0} (not fully readable)", &[&node.name])
     } else {
         node.name.clone()
     }
@@ -142,23 +143,23 @@ impl SpacePage {
             mapped: Vec::new(),
             generation: 0,
         };
-        let target_names = gtk::StringList::new(&["Home", "File System"]);
+        let target_names = gtk::StringList::new(&[tr("Home").as_str(), tr("File System").as_str()]);
         let targets = gtk::DropDown::builder()
             .model(&target_names)
-            .tooltip_text("Folder to scan")
+            .tooltip_text(tr("Folder to scan"))
             .build();
-        let choose = gtk::Button::builder().label("Choose Folder…").build();
+        let choose = gtk::Button::builder().label(tr("Choose Folder…")).build();
         let scan_button = gtk::Button::builder()
-            .label("Scan")
+            .label(tr("Scan"))
             .css_classes(["suggested-action"])
             .build();
         let up_button = gtk::Button::builder()
             .icon_name("go-up-symbolic")
-            .tooltip_text("Parent Folder")
+            .tooltip_text(tr("Parent Folder"))
             .sensitive(false)
             .build();
         let path = gtk::Label::builder()
-            .label("Choose a folder and press Scan.")
+            .label(tr("Choose a folder and press Scan."))
             .xalign(0.0)
             .hexpand(true)
             .ellipsize(pango::EllipsizeMode::Start)
@@ -310,7 +311,9 @@ impl SpacePage {
         let scan = match Scan::start(path) {
             Ok(scan) => scan,
             Err(error) => {
-                self.0.status.set_label(&format!("Could not start the scan: {error}"));
+                self.0
+                    .status
+                    .set_label(&trf("Could not start the scan: {0}", &[&error]));
                 return;
             }
         };
@@ -323,7 +326,7 @@ impl SpacePage {
             state.generation
         };
         self.0.map_frame.set_visible(true);
-        self.0.scan_button.set_label("Cancel");
+        self.0.scan_button.set_label(&tr("Cancel"));
         self.0.scan_button.remove_css_class("suggested-action");
         self.list_folder();
 
@@ -341,7 +344,7 @@ impl SpacePage {
             if !finished {
                 return glib::ControlFlow::Continue;
             }
-            page.0.scan_button.set_label("Scan");
+            page.0.scan_button.set_label(&tr("Scan"));
             page.0.scan_button.add_css_class("suggested-action");
             glib::ControlFlow::Break
         });
@@ -349,7 +352,7 @@ impl SpacePage {
 
     fn choose_folder(&self) {
         let dialog = gtk::FileDialog::builder()
-            .title("Choose a Folder to Scan")
+            .title(tr("Choose a Folder to Scan"))
             .modal(true)
             .build();
         let window = self.0.root.root().and_downcast::<gtk::Window>();
@@ -450,14 +453,15 @@ impl SpacePage {
         self.0.up_button.set_sensitive(state.trail.len() > 1);
 
         let progress = match &state.scan {
-            Some(scan) if !scan.is_finished() => " · Scanning…",
-            Some(scan) if scan.is_cancelled() => " · Cancelled",
-            _ if folder.unread() => " · Some folders could not be read",
-            _ => "",
+            Some(scan) if !scan.is_finished() => Some(tr("Scanning…")),
+            Some(scan) if scan.is_cancelled() => Some(tr("Cancelled")),
+            _ if folder.unread() => Some(tr("Some folders could not be read")),
+            _ => None,
         };
+        let size = format::bytes(total as f64);
         self.0
             .status
-            .set_label(&format!("{}{progress}", format::bytes(total as f64)));
+            .set_label(&progress.map_or(size.clone(), |progress| format!("{size} · {progress}")));
     }
 }
 
@@ -481,7 +485,7 @@ fn name_column() -> gtk::ColumnViewColumn {
         name.bind(&label, "tooltip-text", gtk::Widget::NONE);
     });
     gtk::ColumnViewColumn::builder()
-        .title("Name")
+        .title(tr("Name"))
         .factory(&factory)
         .sorter(&gtk::StringSorter::new(Some(property("name"))))
         .expand(true)
@@ -505,7 +509,7 @@ fn size_column() -> gtk::ColumnViewColumn {
             .bind(&label, "label", gtk::Widget::NONE);
     });
     gtk::ColumnViewColumn::builder()
-        .title("Size on Disk")
+        .title(tr("Size on Disk"))
         .factory(&factory)
         .sorter(&gtk::NumericSorter::new(Some(property("size"))))
         .resizable(true)
@@ -540,7 +544,7 @@ fn share_column() -> gtk::ColumnViewColumn {
             .bind(&label, "label", gtk::Widget::NONE);
     });
     gtk::ColumnViewColumn::builder()
-        .title("Share")
+        .title(tr("Share"))
         .factory(&factory)
         .sorter(&gtk::NumericSorter::new(Some(property("share"))))
         .build()

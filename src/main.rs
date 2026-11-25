@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 mod format;
+mod i18n;
 mod telemetry;
 mod ui;
 mod window;
@@ -11,6 +12,7 @@ use gtk::{gio, glib};
 pub const APP_ID: &str = "io.github.makarov_mm.Pulse";
 
 fn main() -> glib::ExitCode {
+    i18n::init();
     let app = adw::Application::builder().application_id(APP_ID).build();
     app.connect_startup(setup_actions);
     app.connect_activate(|app| {
@@ -41,6 +43,8 @@ fn show_about(app: &adw::Application) {
         .developer_name("Mykhailo Makarov")
         .website(env!("CARGO_PKG_REPOSITORY"))
         .license_type(gtk::License::Gpl30)
+        // Translators: put your name here, one translator per line.
+        .translator_credits(i18n::tr("translator-credits"))
         .build();
     dialog.present(app.active_window().as_ref());
 }

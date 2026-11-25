@@ -1,0 +1,372 @@
+# Russian translation of Pulse.
+# This file is distributed under the same licence as the pulse package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pulse\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-25 23:38+0100\n"
+"PO-Revision-Date: 2026-11-25 23:38+0100\n"
+"Last-Translator: Mykhailo Makarov\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:4
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:4
+msgid "Pulse"
+msgstr "Pulse"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:5
+msgid "System Monitor"
+msgstr "Системный монитор"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:6
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:5
+msgid "Watch processes and system resources"
+msgstr "Наблюдение за процессами и ресурсами системы"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:11
+msgid "process;task;manager;cpu;memory;disk;network;"
+msgstr ""
+"процесс;задача;диспетчер;процессор;память;диск;сеть;process;task;manager;cpu;memory;disk;network;"
+
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:9
+msgid "Mykhailo Makarov"
+msgstr "Михаил Макаров"
+
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:12
+msgid ""
+"Pulse shows processor, memory, disk and network load together with the "
+"processes behind it."
+msgstr ""
+"Pulse показывает нагрузку на процессор, память, диск и сеть вместе с "
+"процессами, которые её создают."
+
+#: src/format.rs:5
+msgid "B"
+msgstr "Б"
+
+#: src/format.rs:5
+msgid "KiB"
+msgstr "КиБ"
+
+#: src/format.rs:5
+msgid "MiB"
+msgstr "МиБ"
+
+#: src/format.rs:5
+msgid "GiB"
+msgstr "ГиБ"
+
+#: src/format.rs:5
+msgid "TiB"
+msgstr "ТиБ"
+
+#: src/format.rs:26
+msgid "{0}/s"
+msgstr "{0}/с"
+
+#. Translators: put your name here, one translator per line.
+#: src/main.rs:47
+msgid "translator-credits"
+msgstr "Михаил Макаров"
+
+#: src/telemetry/sockets.rs:116
+msgid "Established"
+msgstr "Установлено"
+
+#: src/telemetry/sockets.rs:117
+msgid "SYN sent"
+msgstr "Отправлен SYN"
+
+#: src/telemetry/sockets.rs:118
+msgid "SYN received"
+msgstr "Получен SYN"
+
+#: src/telemetry/sockets.rs:119
+msgid "FIN wait 1"
+msgstr "Ожидание FIN 1"
+
+#: src/telemetry/sockets.rs:120
+msgid "FIN wait 2"
+msgstr "Ожидание FIN 2"
+
+#: src/telemetry/sockets.rs:121
+msgid "Time wait"
+msgstr "Ожидание закрытия"
+
+#: src/telemetry/sockets.rs:122
+msgid "Closed"
+msgstr "Закрыто"
+
+#: src/telemetry/sockets.rs:123
+msgid "Close wait"
+msgstr "Ожидание закрытия приложением"
+
+#: src/telemetry/sockets.rs:124
+msgid "Last ACK"
+msgstr "Последний ACK"
+
+#: src/telemetry/sockets.rs:125
+msgid "Listening"
+msgstr "Прослушивание"
+
+#: src/telemetry/sockets.rs:126
+msgid "Closing"
+msgstr "Закрывается"
+
+#: src/ui/connections_page.rs:121
+msgid "Process"
+msgstr "Процесс"
+
+#: src/ui/connections_page.rs:123 src/ui/process_list.rs:182
+msgid "PID"
+msgstr "PID"
+
+#: src/ui/connections_page.rs:124
+msgid "Protocol"
+msgstr "Протокол"
+
+#: src/ui/connections_page.rs:125
+msgid "Local Address"
+msgstr "Локальный адрес"
+
+#: src/ui/connections_page.rs:126
+msgid "Remote Address"
+msgstr "Удалённый адрес"
+
+#: src/ui/connections_page.rs:127
+msgid "State"
+msgstr "Состояние"
+
+#: src/ui/connections_page.rs:138
+msgid ""
+"Sockets of other users’ processes are listed without an owner unless Pulse "
+"runs as root."
+msgstr ""
+"Сокеты процессов других пользователей показаны без владельца, если Pulse "
+"запущен не от root."
+
+#: src/ui/devices_page.rs:96
+msgid "Processors"
+msgstr "Процессоры"
+
+#: src/ui/devices_page.rs:97
+msgid "Disks"
+msgstr "Диски"
+
+#: src/ui/devices_page.rs:98
+msgid "Network Interfaces"
+msgstr "Сетевые интерфейсы"
+
+#: src/ui/devices_page.rs:130
+msgid "CPU {0}"
+msgstr "ЦП {0}"
+
+#: src/ui/devices_page.rs:137
+msgid "Read"
+msgstr "Чтение"
+
+#: src/ui/devices_page.rs:137
+msgid "Write"
+msgstr "Запись"
+
+#: src/ui/process_list.rs:176 src/ui/space_page.rs:488
+msgid "Name"
+msgstr "Имя"
+
+#: src/ui/process_list.rs:187
+msgid "User"
+msgstr "Пользователь"
+
+#: src/ui/process_list.rs:188 src/window.rs:33
+msgid "CPU"
+msgstr "ЦП"
+
+#: src/ui/process_list.rs:195 src/window.rs:34
+msgid "Memory"
+msgstr "Память"
+
+#: src/ui/process_list.rs:202 src/window.rs:35
+msgid "Disk"
+msgstr "Диск"
+
+#: src/ui/process_list.rs:209
+msgid "Threads"
+msgstr "Потоки"
+
+#: src/ui/space_page.rs:94
+msgid "{0} smaller file"
+msgid_plural "{0} smaller files"
+msgstr[0] "{0} файл поменьше"
+msgstr[1] "{0} файла поменьше"
+msgstr[2] "{0} файлов поменьше"
+
+#: src/ui/space_page.rs:96
+msgid "{0} (not fully readable)"
+msgstr "{0} (прочитано не полностью)"
+
+#: src/ui/space_page.rs:146
+msgid "Home"
+msgstr "Домашняя папка"
+
+#: src/ui/space_page.rs:146
+msgid "File System"
+msgstr "Файловая система"
+
+#: src/ui/space_page.rs:149
+msgid "Folder to scan"
+msgstr "Папка для сканирования"
+
+#: src/ui/space_page.rs:151
+msgid "Choose Folder…"
+msgstr "Выбрать папку…"
+
+#: src/ui/space_page.rs:153 src/ui/space_page.rs:347
+msgid "Scan"
+msgstr "Сканировать"
+
+#: src/ui/space_page.rs:158
+msgid "Parent Folder"
+msgstr "Родительская папка"
+
+#: src/ui/space_page.rs:162
+msgid "Choose a folder and press Scan."
+msgstr "Выберите папку и нажмите «Сканировать»."
+
+#: src/ui/space_page.rs:316
+msgid "Could not start the scan: {0}"
+msgstr "Не удалось начать сканирование: {0}"
+
+#: src/ui/space_page.rs:329
+msgid "Cancel"
+msgstr "Отмена"
+
+#: src/ui/space_page.rs:355
+msgid "Choose a Folder to Scan"
+msgstr "Выбор папки для сканирования"
+
+#: src/ui/space_page.rs:456
+msgid "Scanning…"
+msgstr "Сканирование…"
+
+#: src/ui/space_page.rs:457
+msgid "Cancelled"
+msgstr "Отменено"
+
+#: src/ui/space_page.rs:458
+msgid "Some folders could not be read"
+msgstr "Некоторые папки не удалось прочитать"
+
+#: src/ui/space_page.rs:512
+msgid "Size on Disk"
+msgstr "Размер на диске"
+
+#: src/ui/space_page.rs:547
+msgid "Share"
+msgstr "Доля"
+
+#: src/ui/treemap.rs:85
+msgid "{0} smaller item"
+msgid_plural "{0} smaller items"
+msgstr[0] "{0} элемент поменьше"
+msgstr[1] "{0} элемента поменьше"
+msgstr[2] "{0} элементов поменьше"
+
+#: src/window.rs:36
+msgid "Network"
+msgstr "Сеть"
+
+#: src/window.rs:49
+msgid "Processes"
+msgstr "Процессы"
+
+#: src/window.rs:53
+msgid "Devices"
+msgstr "Устройства"
+
+#: src/window.rs:60
+msgid "Connections"
+msgstr "Соединения"
+
+#: src/window.rs:66
+msgid "Disk Space"
+msgstr "Место на диске"
+
+#: src/window.rs:89
+msgid "Search by name, PID, user or command"
+msgstr "Поиск по имени, PID, пользователю или команде"
+
+#: src/window.rs:103
+msgid "Search"
+msgstr "Поиск"
+
+#: src/window.rs:110
+msgid "End Process"
+msgstr "Завершить процесс"
+
+#: src/window.rs:114
+msgid "Show _Kernel Threads"
+msgstr "Показывать потоки _ядра"
+
+#: src/window.rs:115
+msgid "_About Pulse"
+msgstr "_О приложении Pulse"
+
+#: src/window.rs:118
+msgid "Main Menu"
+msgstr "Главное меню"
+
+#: src/window.rs:273
+msgid "{0} process"
+msgid_plural "{0} processes"
+msgstr[0] "{0} процесс"
+msgstr[1] "{0} процесса"
+msgstr[2] "{0} процессов"
+
+#: src/window.rs:274
+msgid "{0} thread"
+msgid_plural "{0} threads"
+msgstr[0] "{0} поток"
+msgstr[1] "{0} потока"
+msgstr[2] "{0} потоков"
+
+#: src/window.rs:283
+msgid "{0} of {1}"
+msgstr "{0} из {1}"
+
+#: src/window.rs:296
+msgid "Read {0} · Write {1}"
+msgstr "Чтение {0} · Запись {1}"
+
+#: src/window.rs:315
+msgid "End “{0}”?"
+msgstr "Завершить «{0}»?"
+
+#: src/window.rs:317
+msgid ""
+"Process {0} will be asked to exit. Force Stop ends it at once, without "
+"letting it save anything."
+msgstr ""
+"Процессу {0} будет отправлена просьба завершиться. «Остановить "
+"принудительно» завершает его сразу, не давая ничего сохранить."
+
+#: src/window.rs:322
+msgid "_Cancel"
+msgstr "_Отмена"
+
+#: src/window.rs:323
+msgid "_Force Stop"
+msgstr "Остановить _принудительно"
+
+#: src/window.rs:324
+msgid "_End Process"
+msgstr "_Завершить процесс"
+
+#: src/window.rs:337
+msgid "Could not end “{0}”: {1}"
+msgstr "Не удалось завершить «{0}»: {1}"

@@ -6,6 +6,8 @@ use std::collections::HashMap;
 use std::fs;
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr};
 
+use crate::i18n::mark;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum Protocol {
     Tcp,
@@ -27,7 +29,7 @@ pub struct Socket {
     pub local: SocketAddr,
     /// `None` for a socket that is not connected: a listener or an unconnected UDP socket.
     pub remote: Option<SocketAddr>,
-    /// The TCP state. Empty for UDP.
+    /// The TCP state in English, to be translated for display. Empty for UDP.
     pub state: &'static str,
     /// The kernel's socket inode, which tells apart sockets that share their addresses.
     pub inode: u64,
@@ -111,17 +113,17 @@ fn address(text: &str) -> Option<SocketAddr> {
 /// Names from the kernel's `tcp_states.h`.
 fn tcp_state(state: u8) -> &'static str {
     match state {
-        1 => "Established",
-        2 => "SYN sent",
-        3 => "SYN received",
-        4 => "FIN wait 1",
-        5 => "FIN wait 2",
-        6 => "Time wait",
-        7 => "Closed",
-        8 => "Close wait",
-        9 => "Last ACK",
-        10 => "Listening",
-        11 => "Closing",
+        1 => mark("Established"),
+        2 => mark("SYN sent"),
+        3 => mark("SYN received"),
+        4 => mark("FIN wait 1"),
+        5 => mark("FIN wait 2"),
+        6 => mark("Time wait"),
+        7 => mark("Closed"),
+        8 => mark("Close wait"),
+        9 => mark("Last ACK"),
+        10 => mark("Listening"),
+        11 => mark("Closing"),
         _ => "",
     }
 }

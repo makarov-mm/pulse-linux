@@ -8,6 +8,7 @@ use adw::prelude::*;
 use gtk::{gio, glib};
 
 use crate::format;
+use crate::i18n::{tr, trf, trn};
 use crate::telemetry::{self, Frame, Sampler, sockets};
 use crate::ui::{ConnectionsPage, DevicesPage, MetricCard, ProcessList, ProcessObject, SpacePage};
 
@@ -29,10 +30,10 @@ struct Live {
 
 pub fn build(app: &adw::Application) -> adw::ApplicationWindow {
     let live = Live {
-        cpu: MetricCard::new("CPU", Some(100.0)),
-        memory: MetricCard::new("Memory", Some(100.0)),
-        disk: MetricCard::new("Disk", None),
-        network: MetricCard::new("Network", None),
+        cpu: MetricCard::new(&tr("CPU"), Some(100.0)),
+        memory: MetricCard::new(&tr("Memory"), Some(100.0)),
+        disk: MetricCard::new(&tr("Disk"), None),
+        network: MetricCard::new(&tr("Network"), None),
         processes: Rc::new(ProcessList::new()),
         devices: DevicesPage::new(),
     };
@@ -45,16 +46,26 @@ pub fn build(app: &adw::Application) -> adw::ApplicationWindow {
     let space = SpacePage::new();
     let stack = adw::ViewStack::builder().vexpand(true).build();
     let table = gtk::Frame::builder().child(processes.widget()).build();
-    stack.add_titled_with_icon(&table, Some(PROCESSES_PAGE), "Processes", "view-list-symbolic");
-    stack.add_titled_with_icon(live.devices.widget(), Some("devices"), "Devices", "computer-symbolic");
+    stack.add_titled_with_icon(&table, Some(PROCESSES_PAGE), &tr("Processes"), "view-list-symbolic");
+    stack.add_titled_with_icon(
+        live.devices.widget(),
+        Some("devices"),
+        &tr("Devices"),
+        "computer-symbolic",
+    );
     let connections = Rc::new(ConnectionsPage::new());
     stack.add_titled_with_icon(
         connections.widget(),
         Some(CONNECTIONS_PAGE),
-        "Connections",
+        &tr("Connections"),
         "network-transmit-receive-symbolic",
     );
-    stack.add_titled_with_icon(space.widget(), Some("space"), "Disk Space", "drive-harddisk-symbolic");
+    stack.add_titled_with_icon(
+        space.widget(),
+        Some("space"),
+        &tr("Disk Space"),
+        "drive-harddisk-symbolic",
+    );
     follow_sockets(&stack, connections);
     // The page object owns the scan, so this handler keeps it alive for as long as the stack exists.
     stack.connect_destroy(move |_| {
@@ -75,7 +86,7 @@ pub fn build(app: &adw::Application) -> adw::ApplicationWindow {
     toasts.set_child(Some(&content));
 
     let search_entry = gtk::SearchEntry::builder()
-        .placeholder_text("Search by name, PID, user or command")
+        .placeholder_text(tr("Search by name, PID, user or command"))
         .hexpand(true)
         .build();
     let search_bar = gtk::SearchBar::builder()
@@ -89,22 +100,24 @@ pub fn build(app: &adw::Application) -> adw::ApplicationWindow {
 
     let search_button = gtk::ToggleButton::builder()
         .icon_name("system-search-symbolic")
-        .tooltip_text("Search")
+        .tooltip_text(tr("Search"))
         .build();
     search_button
         .bind_property("active", &search_bar, "search-mode-enabled")
         .bidirectional()
         .build();
+    // An icon keeps the header from crowding the tabs in languages with longer words.
     let end_button = gtk::Button::builder()
-        .label("End Process")
+        .icon_name("process-stop-symbolic")
+        .tooltip_text(tr("End Process"))
         .action_name("win.end-process")
         .build();
     let menu = gio::Menu::new();
-    menu.append(Some("Show _Kernel Threads"), Some("win.show-kernel-threads"));
-    menu.append(Some("_About Pulse"), Some("app.about"));
+    menu.append(Some(&tr("Show _Kernel Threads")), Some("win.show-kernel-threads"));
+    menu.append(Some(&tr("_About Pulse")), Some("app.about"));
     let menu_button = gtk::MenuButton::builder()
         .icon_name("open-menu-symbolic")
-        .tooltip_text("Main Menu")
+        .tooltip_text(tr("Main Menu"))
         .primary(true)
         .menu_model(&menu)
         .build();
@@ -257,17 +270,23 @@ fn show(live: &Live, frame: &Frame) {
     live.cpu.update(
         frame.cpu,
         &format::percent(frame.cpu),
-        &format!("{} processes · {threads} threads", frame.processes.len()),
+        &format!(
+            "{} · {}",
+            trn("{0} process", "{0} processes", frame.processes.len()),
+            trn("{0} thread", "{0} threads", threads as usize)
+        ),
     );
 
     let memory = (frame.memory_total > 0).then(|| 100.0 * frame.memory_used as f64 / frame.memory_total as f64);
     live.memory.update(
         memory,
         &format::percent(memory),
-        &format!(
-            "{} of {}",
-            format::bytes(frame.memory_used as f64),
-            format::bytes(frame.memory_total as f64)
+        &trf(
+            "{0} of {1}",
+            &[
+                &format::bytes(frame.memory_used as f64),
+                &format::bytes(frame.memory_total as f64),
+            ],
         ),
     );
 
@@ -275,10 +294,9 @@ fn show(live: &Live, frame: &Frame) {
     live.disk.update(
         disk,
         &format::rate(disk),
-        &format!(
-            "Read {} · Write {}",
-            format::rate(frame.disk_read),
-            format::rate(frame.disk_write)
+        &trf(
+            "Read {0} · Write {1}",
+            &[&format::rate(frame.disk_read), &format::rate(frame.disk_write)],
         ),
     );
 
@@ -296,13 +314,17 @@ fn show(live: &Live, frame: &Frame) {
 fn confirm_end(window: &adw::ApplicationWindow, toasts: &adw::ToastOverlay, process: &ProcessObject) {
     let (key, name) = (process.key(), process.name());
     let dialog = adw::AlertDialog::new(
-        Some(&format!("End “{name}”?")),
-        Some(&format!(
-            "Process {} will be asked to exit. Force Stop ends it at once, without letting it save anything.",
-            key.pid
+        Some(&trf("End “{0}”?", &[&name])),
+        Some(&trf(
+            "Process {0} will be asked to exit. Force Stop ends it at once, without letting it save anything.",
+            &[&key.pid],
         )),
     );
-    dialog.add_responses(&[("cancel", "_Cancel"), ("kill", "_Force Stop"), ("end", "_End Process")]);
+    dialog.add_responses(&[
+        ("cancel", &tr("_Cancel")),
+        ("kill", &tr("_Force Stop")),
+        ("end", &tr("_End Process")),
+    ]);
     dialog.set_response_appearance("kill", adw::ResponseAppearance::Destructive);
     dialog.set_response_appearance("end", adw::ResponseAppearance::Suggested);
     dialog.set_default_response(Some("cancel"));
@@ -314,7 +336,7 @@ fn confirm_end(window: &adw::ApplicationWindow, toasts: &adw::ToastOverlay, proc
                 return;
             }
             if let Err(error) = telemetry::terminate(key, response == "kill") {
-                toasts.add_toast(adw::Toast::new(&format!("Could not end “{name}”: {error}")));
+                toasts.add_toast(adw::Toast::new(&trf("Could not end “{0}”: {1}", &[&name, &error])));
             }
         }
     });

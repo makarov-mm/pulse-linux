@@ -8,6 +8,7 @@ use gtk::subclass::prelude::*;
 use gtk::{gio, glib, pango};
 
 use crate::format;
+use crate::i18n::tr;
 use crate::telemetry::{ProcessKey, ProcessSample};
 
 mod imp {
@@ -172,40 +173,40 @@ impl ProcessList {
             move |item: gtk::PropertyExpression| item.chain_property::<ProcessObject>(name).upcast()
         };
         let name = column(
-            "Name",
+            &tr("Name"),
             Cell::Wide,
             &string_sorter("name"),
             Some("command"),
             text("name"),
         );
-        let pid = column("PID", Cell::Number, &numeric_sorter("pid"), None, |item| {
+        let pid = column(&tr("PID"), Cell::Number, &numeric_sorter("pid"), None, |item| {
             item.chain_property::<ProcessObject>("pid")
                 .chain_closure::<String>(glib::closure!(|_: Option<glib::Object>, pid: i32| pid.to_string()))
                 .upcast()
         });
-        let user = column("User", Cell::Text, &string_sorter("user"), None, text("user"));
-        let cpu = column("CPU", Cell::Number, &numeric_sorter("cpu"), None, |item| {
+        let user = column(&tr("User"), Cell::Text, &string_sorter("user"), None, text("user"));
+        let cpu = column(&tr("CPU"), Cell::Number, &numeric_sorter("cpu"), None, |item| {
             item.chain_property::<ProcessObject>("cpu")
                 .chain_closure::<String>(glib::closure!(|_: Option<glib::Object>, cpu: f64| {
                     format::percent((cpu >= 0.0).then_some(cpu))
                 }))
                 .upcast()
         });
-        let memory = column("Memory", Cell::Number, &numeric_sorter("memory"), None, |item| {
+        let memory = column(&tr("Memory"), Cell::Number, &numeric_sorter("memory"), None, |item| {
             item.chain_property::<ProcessObject>("memory")
                 .chain_closure::<String>(glib::closure!(|_: Option<glib::Object>, bytes: u64| {
                     format::bytes(bytes as f64)
                 }))
                 .upcast()
         });
-        let disk = column("Disk", Cell::Number, &numeric_sorter("disk"), None, |item| {
+        let disk = column(&tr("Disk"), Cell::Number, &numeric_sorter("disk"), None, |item| {
             item.chain_property::<ProcessObject>("disk")
                 .chain_closure::<String>(glib::closure!(|_: Option<glib::Object>, rate: f64| {
                     format::rate((rate >= 0.0).then_some(rate))
                 }))
                 .upcast()
         });
-        let threads = column("Threads", Cell::Number, &numeric_sorter("threads"), None, |item| {
+        let threads = column(&tr("Threads"), Cell::Number, &numeric_sorter("threads"), None, |item| {
             item.chain_property::<ProcessObject>("threads")
                 .chain_closure::<String>(glib::closure!(
                     |_: Option<glib::Object>, threads: u32| threads.to_string()
