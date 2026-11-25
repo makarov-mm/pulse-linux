@@ -3,6 +3,7 @@
 //! Samples the system through procfs and sysfs. Nothing here touches the UI.
 
 mod procfs;
+pub mod sockets;
 pub mod space;
 mod users;
 

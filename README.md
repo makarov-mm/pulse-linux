@@ -6,7 +6,8 @@ A process and resource monitor built with Rust, GTK 4 and libadwaita.
 |---|---|
 | Processes | Every process with its user, CPU, memory, disk I/O and threads. Sort by any column, search by name, PID, user or command line, and end a process. |
 | Devices | Load per processor, per physical disk and per network interface. |
-| Disk Space | The folders and files that take up the space under a folder you choose, with drill-down. |
+| Connections | Open TCP and UDP sockets with their addresses, state and the process that holds each. |
+| Disk Space | The folders and files that take up the space under a folder you choose, as a map and a list, with drill-down. |
 
 Four cards above the tabs follow CPU, memory, disk and network for the last minute.
 
@@ -30,8 +31,8 @@ cargo test
 |---|---|
 | `src/main.rs` | Application ID, application actions, About dialog. |
 | `src/window.rs` | Window layout, window actions, the sampling loop. |
-| `src/telemetry/` | Sampling through procfs and sysfs, user names, the disk space scanner. No UI code. |
-| `src/ui/` | Widgets: metric card, sparkline, process table, devices page, disk space page. |
+| `src/telemetry/` | Sampling through procfs and sysfs, user names, sockets, the disk space scanner. No UI code. |
+| `src/ui/` | Widgets: metric card, sparkline, treemap, and the page behind each tab. |
 | `src/format.rs` | Sizes, rates and percentages as text. |
 | `data/` | Desktop entry, AppStream metadata and icon. |
 
@@ -43,18 +44,20 @@ cargo test
 - Disk and network totals count hardware devices only. Partitions, device-mapper volumes, bridges and VPN tunnels repeat traffic that already crosses a hardware device.
 - Tables keep one object per row and update its properties in place, which keeps selection and scroll position stable.
 - A disk space scan starts only on request. It stays on one filesystem, never follows symbolic links, counts hard-linked files once and reports allocated size, like `du -x`.
+- Sockets are read only while the Connections tab is in view, every two seconds, off the main loop.
 - Kernel threads are hidden until “Show Kernel Threads” is switched on in the menu.
 
 ## Limits
 
-- Disk I/O per process is readable only for your own processes unless Pulse runs as root.
+- Disk I/O per process and the owner of a socket are readable only for your own processes unless Pulse runs as root.
+- Connections cover the network namespace Pulse runs in, so sockets inside containers are not listed.
 - Ending another user's process needs privileges Pulse does not ask for yet.
 
 ## Not here yet
 
 - Translations (gettext), a Flatpak manifest and a Meson build that installs the files in `data/`.
 - A privileged helper behind polkit for actions on other users' processes and for eBPF tracing.
-- GPU, services, connections and startup entries.
+- GPU, services and startup entries.
 
 ## Licence
 

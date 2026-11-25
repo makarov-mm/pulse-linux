@@ -11,6 +11,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, pango};
 
+use super::treemap::{Item, Treemap};
 use crate::format;
 use crate::telemetry::space::{Scan, SpaceNode};
 
@@ -67,13 +68,7 @@ impl SpaceObject {
     }
 
     fn refresh(&self, node: &SpaceNode, total: u64) {
-        let name = if node.grouped > 0 {
-            format!("{} smaller files", node.grouped)
-        } else if node.unread() {
-            format!("{} (not fully readable)", node.name)
-        } else {
-            node.name.clone()
-        };
+        let name = label(node);
         if self.name() != name {
             self.set_name(name);
         }
@@ -92,12 +87,25 @@ impl SpaceObject {
     }
 }
 
+/// What a node is called in the list and on the map.
+fn label(node: &SpaceNode) -> String {
+    if node.grouped > 0 {
+        format!("{} smaller files", node.grouped)
+    } else if node.unread() {
+        format!("{} (not fully readable)", node.name)
+    } else {
+        node.name.clone()
+    }
+}
+
 struct State {
     scan: Option<Scan>,
     /// The folders from the scan's root down to the one that is listed.
     trail: Vec<Arc<SpaceNode>>,
     targets: Vec<PathBuf>,
     objects: HashMap<*const SpaceNode, SpaceObject>,
+    /// The listed folder's children in the order the map was given them.
+    mapped: Vec<Arc<SpaceNode>>,
     /// Counts scans, so the timer of a replaced scan can tell that it is no longer wanted.
     generation: u32,
 }
@@ -110,6 +118,9 @@ struct Inner {
     up_button: gtk::Button,
     path: gtk::Label,
     status: gtk::Label,
+    map: Treemap,
+    /// Hidden until the first scan gives the map something to show.
+    map_frame: gtk::Frame,
     view: gtk::ColumnView,
     store: gio::ListStore,
     selection: gtk::SingleSelection,
@@ -128,6 +139,7 @@ impl SpacePage {
             trail: Vec::new(),
             targets: vec![glib::home_dir(), PathBuf::from("/")],
             objects: HashMap::new(),
+            mapped: Vec::new(),
             generation: 0,
         };
         let target_names = gtk::StringList::new(&["Home", "File System"]);
@@ -193,7 +205,10 @@ impl SpacePage {
             .orientation(gtk::Orientation::Vertical)
             .spacing(12)
             .build();
+        let map = Treemap::new();
+        let map_frame = gtk::Frame::builder().child(map.widget()).visible(false).build();
         root.append(&bar);
+        root.append(&map_frame);
         root.append(&gtk::Frame::builder().child(&scrolled).build());
 
         let page = Self(Rc::new(Inner {
@@ -204,6 +219,8 @@ impl SpacePage {
             up_button,
             path,
             status,
+            map,
+            map_frame,
             view,
             store,
             selection,
@@ -244,9 +261,21 @@ impl SpacePage {
         self.0.view.connect_activate({
             let weak = Rc::downgrade(&self.0);
             move |_, position| {
-                if let Some(inner) = weak.upgrade() {
-                    SpacePage(inner).open(position);
-                }
+                let Some(page) = weak.upgrade().map(SpacePage) else {
+                    return;
+                };
+                let row = page.0.selection.item(position).and_downcast::<SpaceObject>();
+                page.open(row.and_then(|row| row.node()));
+            }
+        });
+        self.0.map.connect_activated({
+            let weak = Rc::downgrade(&self.0);
+            move |index| {
+                let Some(page) = weak.upgrade().map(SpacePage) else {
+                    return;
+                };
+                let node = page.0.state.borrow().mapped.get(index).cloned();
+                page.open(node);
             }
         });
     }
@@ -293,6 +322,7 @@ impl SpacePage {
             state.generation += 1;
             state.generation
         };
+        self.0.map_frame.set_visible(true);
         self.0.scan_button.set_label("Cancel");
         self.0.scan_button.remove_css_class("suggested-action");
         self.list_folder();
@@ -348,13 +378,8 @@ impl SpacePage {
         });
     }
 
-    fn open(&self, position: u32) {
-        let node = self
-            .0
-            .selection
-            .item(position)
-            .and_downcast::<SpaceObject>()
-            .and_then(|row| row.node());
+    /// Lists a folder that was activated in the table or on the map. Files stay where they are.
+    fn open(&self, node: Option<Arc<SpaceNode>>) {
         if let Some(node) = node.filter(|node| node.is_folder) {
             self.0.state.borrow_mut().trail.push(node);
             self.list_folder();
@@ -377,6 +402,10 @@ impl SpacePage {
         self.0.state.borrow_mut().objects.clear();
         self.0.store.remove_all();
         self.refresh();
+        // Start at the largest entries whatever position the previous folder was left at.
+        if self.0.store.n_items() > 0 {
+            self.0.view.scroll_to(0, None, gtk::ListScrollFlags::NONE, None);
+        }
     }
 
     /// Brings rows, path and status in line with the scan. Rows keep their objects,
@@ -407,6 +436,13 @@ impl SpacePage {
         if let Some(sorter) = self.0.view.sorter() {
             sorter.changed(gtk::SorterChange::Different);
         }
+        let items = children.iter().map(|child| Item {
+            label: label(child),
+            size: child.size(),
+            folder: child.is_folder,
+        });
+        self.0.map.set_items(items.collect());
+        state.mapped = children;
 
         let names: Vec<&str> = state.trail.iter().map(|node| node.name.trim_end_matches('/')).collect();
         let path = names.join("/");

@@ -2,17 +2,20 @@
 
 use std::rc::Rc;
 use std::thread;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use adw::prelude::*;
 use gtk::{gio, glib};
 
 use crate::format;
-use crate::telemetry::{self, Frame, Sampler};
-use crate::ui::{DevicesPage, MetricCard, ProcessList, ProcessObject, SpacePage};
+use crate::telemetry::{self, Frame, Sampler, sockets};
+use crate::ui::{ConnectionsPage, DevicesPage, MetricCard, ProcessList, ProcessObject, SpacePage};
 
 const SAMPLE_INTERVAL: Duration = Duration::from_secs(1);
 const PROCESSES_PAGE: &str = "processes";
+const CONNECTIONS_PAGE: &str = "connections";
+/// Reading the socket tables walks every process's descriptors, so it runs less often than sampling.
+const SOCKET_INTERVAL: Duration = Duration::from_secs(2);
 
 /// The parts of the window that every sample updates.
 struct Live {
@@ -44,7 +47,15 @@ pub fn build(app: &adw::Application) -> adw::ApplicationWindow {
     let table = gtk::Frame::builder().child(processes.widget()).build();
     stack.add_titled_with_icon(&table, Some(PROCESSES_PAGE), "Processes", "view-list-symbolic");
     stack.add_titled_with_icon(live.devices.widget(), Some("devices"), "Devices", "computer-symbolic");
+    let connections = Rc::new(ConnectionsPage::new());
+    stack.add_titled_with_icon(
+        connections.widget(),
+        Some(CONNECTIONS_PAGE),
+        "Connections",
+        "network-transmit-receive-symbolic",
+    );
     stack.add_titled_with_icon(space.widget(), Some("space"), "Disk Space", "drive-harddisk-symbolic");
+    follow_sockets(&stack, connections);
     // The page object owns the scan, so this handler keeps it alive for as long as the stack exists.
     stack.connect_destroy(move |_| {
         let _ = &space;
@@ -191,6 +202,28 @@ fn add_actions(
     };
     set_end_enabled(false);
     processes.connect_selection_changed(move |selected| set_end_enabled(selected.is_some()));
+}
+
+/// Keeps the connections page current while it is the visible one, starting as soon as it is shown.
+fn follow_sockets(stack: &adw::ViewStack, page: Rc<ConnectionsPage>) {
+    let stack = stack.downgrade();
+    glib::spawn_future_local(async move {
+        let mut last: Option<Instant> = None;
+        loop {
+            let Some(visible) = stack.upgrade().map(|stack| stack.visible_child_name()) else {
+                break;
+            };
+            if visible.as_deref() != Some(CONNECTIONS_PAGE) {
+                last = None;
+            } else if last.is_none_or(|last| last.elapsed() >= SOCKET_INTERVAL) {
+                if let Ok(sockets) = gio::spawn_blocking(sockets::read).await {
+                    page.update(&sockets);
+                }
+                last = Some(Instant::now());
+            }
+            glib::timeout_future(Duration::from_millis(250)).await;
+        }
+    });
 }
 
 /// Samples on a worker thread and applies each frame on the main loop.
