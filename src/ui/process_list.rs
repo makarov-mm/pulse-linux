@@ -33,6 +33,18 @@ mod imp {
         memory: Cell<u64>,
         #[property(get, set)]
         threads: Cell<u32>,
+        #[property(get, set)]
+        user: RefCell<String>,
+        #[property(get, set)]
+        command: RefCell<String>,
+        /// Bytes per second read and written. Negative while it is unknown or unreadable.
+        #[property(get, set)]
+        disk: Cell<f64>,
+        #[property(get, set)]
+        kernel: Cell<bool>,
+        /// Everything the search box matches against.
+        #[property(get, set)]
+        search: RefCell<String>,
         pub start_time: Cell<u64>,
     }
 
@@ -55,6 +67,13 @@ impl ProcessObject {
         let object: Self = glib::Object::builder()
             .property("pid", sample.key.pid)
             .property("name", &sample.name)
+            .property("user", &*sample.user)
+            .property("command", &*sample.command)
+            .property("kernel", sample.kernel)
+            .property(
+                "search",
+                format!("{} {} {} {}", sample.name, sample.key.pid, sample.user, sample.command),
+            )
             .build();
         object.imp().start_time.set(sample.key.start_time);
         object.refresh(sample);
@@ -62,7 +81,10 @@ impl ProcessObject {
     }
 
     pub fn key(&self) -> ProcessKey {
-        ProcessKey { pid: self.pid(), start_time: self.imp().start_time.get() }
+        ProcessKey {
+            pid: self.pid(),
+            start_time: self.imp().start_time.get(),
+        }
     }
 
     /// Only values that changed are set, so unchanged cells are not redrawn.
@@ -77,6 +99,10 @@ impl ProcessObject {
         if self.threads() != sample.threads {
             self.set_threads(sample.threads);
         }
+        let disk = sample.disk.unwrap_or(-1.0);
+        if self.disk() != disk {
+            self.set_disk(disk);
+        }
         // A process can rename itself (prctl, exec).
         if self.name() != sample.name {
             self.set_name(sample.name.as_str());
@@ -89,7 +115,10 @@ pub struct ProcessList {
     root: gtk::ScrolledWindow,
     view: gtk::ColumnView,
     store: gio::ListStore,
-    filter: gtk::StringFilter,
+    search: gtk::StringFilter,
+    /// Hides kernel threads while it is part of `filters`.
+    user_only: gtk::BoolFilter,
+    filters: gtk::EveryFilter,
     selection: gtk::SingleSelection,
     objects: RefCell<HashMap<ProcessKey, ProcessObject>>,
 }
@@ -97,12 +126,19 @@ pub struct ProcessList {
 impl ProcessList {
     pub fn new() -> Self {
         let store = gio::ListStore::new::<ProcessObject>();
-        let filter = gtk::StringFilter::builder()
-            .expression(property("name"))
+        let search = gtk::StringFilter::builder()
+            .expression(property("search"))
             .ignore_case(true)
             .match_mode(gtk::StringFilterMatchMode::Substring)
             .build();
-        let filtered = gtk::FilterListModel::new(Some(store.clone()), Some(filter.clone()));
+        let user_only = gtk::BoolFilter::builder()
+            .expression(property("kernel"))
+            .invert(true)
+            .build();
+        let filters = gtk::EveryFilter::new();
+        filters.append(search.clone());
+        filters.append(user_only.clone());
+        let filtered = gtk::FilterListModel::new(Some(store.clone()), Some(filters.clone()));
         let sorted = gtk::SortListModel::new(Some(filtered), None::<gtk::Sorter>);
         let selection = gtk::SingleSelection::builder()
             .model(&sorted)
@@ -115,34 +151,51 @@ impl ProcessList {
             .css_classes(["data-table"])
             .build();
 
-        let name = column("Name", true, &gtk::StringSorter::new(Some(property("name"))), |item| {
-            item.chain_property::<ProcessObject>("name").upcast()
-        });
-        let pid = column("PID", false, &numeric_sorter("pid"), |item| {
+        let text = |name: &'static str| {
+            move |item: gtk::PropertyExpression| item.chain_property::<ProcessObject>(name).upcast()
+        };
+        let name = column(
+            "Name",
+            Cell::Wide,
+            &string_sorter("name"),
+            Some("command"),
+            text("name"),
+        );
+        let pid = column("PID", Cell::Number, &numeric_sorter("pid"), None, |item| {
             item.chain_property::<ProcessObject>("pid")
                 .chain_closure::<String>(glib::closure!(|_: Option<glib::Object>, pid: i32| pid.to_string()))
                 .upcast()
         });
-        let cpu = column("CPU", false, &numeric_sorter("cpu"), |item| {
+        let user = column("User", Cell::Text, &string_sorter("user"), None, text("user"));
+        let cpu = column("CPU", Cell::Number, &numeric_sorter("cpu"), None, |item| {
             item.chain_property::<ProcessObject>("cpu")
                 .chain_closure::<String>(glib::closure!(|_: Option<glib::Object>, cpu: f64| {
                     format::percent((cpu >= 0.0).then_some(cpu))
                 }))
                 .upcast()
         });
-        let memory = column("Memory", false, &numeric_sorter("memory"), |item| {
+        let memory = column("Memory", Cell::Number, &numeric_sorter("memory"), None, |item| {
             item.chain_property::<ProcessObject>("memory")
                 .chain_closure::<String>(glib::closure!(|_: Option<glib::Object>, bytes: u64| {
                     format::bytes(bytes as f64)
                 }))
                 .upcast()
         });
-        let threads = column("Threads", false, &numeric_sorter("threads"), |item| {
-            item.chain_property::<ProcessObject>("threads")
-                .chain_closure::<String>(glib::closure!(|_: Option<glib::Object>, threads: u32| threads.to_string()))
+        let disk = column("Disk", Cell::Number, &numeric_sorter("disk"), None, |item| {
+            item.chain_property::<ProcessObject>("disk")
+                .chain_closure::<String>(glib::closure!(|_: Option<glib::Object>, rate: f64| {
+                    format::rate((rate >= 0.0).then_some(rate))
+                }))
                 .upcast()
         });
-        for column in [&name, &pid, &cpu, &memory, &threads] {
+        let threads = column("Threads", Cell::Number, &numeric_sorter("threads"), None, |item| {
+            item.chain_property::<ProcessObject>("threads")
+                .chain_closure::<String>(glib::closure!(
+                    |_: Option<glib::Object>, threads: u32| threads.to_string()
+                ))
+                .upcast()
+        });
+        for column in [&name, &pid, &user, &cpu, &memory, &disk, &threads] {
             view.append_column(column);
         }
 
@@ -155,7 +208,16 @@ impl ProcessList {
             .vexpand(true)
             .child(&view)
             .build();
-        Self { root, view, store, filter, selection, objects: RefCell::default() }
+        Self {
+            root,
+            view,
+            store,
+            search,
+            user_only,
+            filters,
+            selection,
+            objects: RefCell::default(),
+        }
     }
 
     pub fn widget(&self) -> &gtk::ScrolledWindow {
@@ -181,7 +243,9 @@ impl ProcessList {
         if objects.len() != alive.len() {
             objects.retain(|key, _| alive.contains(key));
             self.store.retain(|object| {
-                object.downcast_ref::<ProcessObject>().is_some_and(|process| alive.contains(&process.key()))
+                object
+                    .downcast_ref::<ProcessObject>()
+                    .is_some_and(|process| alive.contains(&process.key()))
             });
         }
         // Sort models do not watch item properties, so the new values are announced here.
@@ -191,7 +255,16 @@ impl ProcessList {
     }
 
     pub fn set_search(&self, text: &str) {
-        self.filter.set_search(Some(text));
+        self.search.set_search(Some(text));
+    }
+
+    pub fn set_show_kernel_threads(&self, show: bool) {
+        let hidden = self.filters.n_items() > 1;
+        if show && hidden {
+            self.filters.remove(1);
+        } else if !show && !hidden {
+            self.filters.append(self.user_only.clone());
+        }
     }
 
     pub fn selected(&self) -> Option<ProcessObject> {
@@ -213,31 +286,54 @@ fn numeric_sorter(name: &str) -> gtk::NumericSorter {
     gtk::NumericSorter::new(Some(property(name)))
 }
 
-/// A text column. `text` turns the expression for a row's `ProcessObject` into the cell's string.
+fn string_sorter(name: &str) -> gtk::StringSorter {
+    gtk::StringSorter::new(Some(property(name)))
+}
+
+/// How a column lays out its text.
+#[derive(Clone, Copy, PartialEq)]
+enum Cell {
+    /// Left-aligned and given the spare width.
+    Wide,
+    Text,
+    /// Right-aligned with tabular digits.
+    Number,
+}
+
+/// A text column. `text` turns the expression for a row's `ProcessObject` into the cell's string,
+/// and `tooltip` names a property shown when the pointer rests on the cell.
 fn column(
     title: &str,
-    is_name: bool,
+    cell: Cell,
     sorter: &impl IsA<gtk::Sorter>,
+    tooltip: Option<&'static str>,
     text: impl Fn(gtk::PropertyExpression) -> gtk::Expression + 'static,
 ) -> gtk::ColumnViewColumn {
     let factory = gtk::SignalListItemFactory::new();
     factory.connect_setup(move |_, item| {
-        let Some(item) = item.downcast_ref::<gtk::ListItem>() else { return };
+        let Some(item) = item.downcast_ref::<gtk::ListItem>() else {
+            return;
+        };
         let label = gtk::Label::builder()
-            .xalign(if is_name { 0.0 } else { 1.0 })
+            .xalign(if cell == Cell::Number { 1.0 } else { 0.0 })
             .ellipsize(pango::EllipsizeMode::End)
             .build();
-        if !is_name {
+        if cell == Cell::Number {
             label.add_css_class("numeric");
         }
         item.set_child(Some(&label));
         text(item.property_expression("item")).bind(&label, "label", gtk::Widget::NONE);
+        if let Some(tooltip) = tooltip {
+            item.property_expression("item")
+                .chain_property::<ProcessObject>(tooltip)
+                .bind(&label, "tooltip-text", gtk::Widget::NONE);
+        }
     });
     gtk::ColumnViewColumn::builder()
         .title(title)
         .factory(&factory)
         .sorter(sorter)
-        .expand(is_name)
+        .expand(cell == Cell::Wide)
         .resizable(true)
         .build()
 }

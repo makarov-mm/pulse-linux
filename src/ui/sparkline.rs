@@ -19,9 +19,9 @@ pub struct Sparkline {
 
 impl Sparkline {
     /// `maximum` fixes the top of the axis (100 for a percentage). Without it the axis follows the data.
-    pub fn new(maximum: Option<f64>) -> Self {
+    pub fn new(maximum: Option<f64>, height: i32) -> Self {
         let area = gtk::DrawingArea::builder()
-            .content_height(44)
+            .content_height(height)
             .hexpand(true)
             .css_classes(["accent"])
             .build();
@@ -66,7 +66,11 @@ fn draw(
     // The newest sample sits at the right edge.
     let offset = POINTS - points.len();
     let color = area.color();
-    let (red, green, blue) = (f64::from(color.red()), f64::from(color.green()), f64::from(color.blue()));
+    let (red, green, blue) = (
+        f64::from(color.red()),
+        f64::from(color.green()),
+        f64::from(color.blue()),
+    );
 
     let mut run: Vec<(f64, f64)> = Vec::new();
     for (index, point) in points.iter().map(Some).chain([None]).enumerate() {
