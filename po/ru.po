@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pulse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 23:42+0100\n"
+"POT-Creation-Date: 2026-11-26 00:01+0100\n"
 "PO-Revision-Date: 2026-11-25 23:38+0100\n"
 "Last-Translator: Mykhailo Makarov\n"
 "Language-Team: Russian\n"
@@ -46,27 +46,27 @@ msgstr ""
 "Pulse показывает нагрузку на процессор, память, диск и сеть вместе с "
 "процессами, которые её создают."
 
-#: src/format.rs:5
+#: src/format.rs:8
 msgid "B"
 msgstr "Б"
 
-#: src/format.rs:5
+#: src/format.rs:8
 msgid "KiB"
 msgstr "КиБ"
 
-#: src/format.rs:5
+#: src/format.rs:8
 msgid "MiB"
 msgstr "МиБ"
 
-#: src/format.rs:5
+#: src/format.rs:8
 msgid "GiB"
 msgstr "ГиБ"
 
-#: src/format.rs:5
+#: src/format.rs:8
 msgid "TiB"
 msgstr "ТиБ"
 
-#: src/format.rs:26
+#: src/format.rs:52
 msgid "{0}/s"
 msgstr "{0}/с"
 
@@ -119,93 +119,93 @@ msgstr "Прослушивание"
 msgid "Closing"
 msgstr "Закрывается"
 
-#: src/window.rs:34 src/ui/process_list.rs:188
+#: src/window.rs:39 src/ui/process_list.rs:188
 msgid "CPU"
 msgstr "ЦП"
 
-#: src/window.rs:35 src/ui/process_list.rs:195
+#: src/window.rs:40 src/ui/process_list.rs:195
 msgid "Memory"
 msgstr "Память"
 
-#: src/window.rs:36 src/ui/process_list.rs:202
+#: src/window.rs:41 src/ui/process_list.rs:202
 msgid "Disk"
 msgstr "Диск"
 
-#: src/window.rs:37
+#: src/window.rs:42
 msgid "Network"
 msgstr "Сеть"
 
-#: src/window.rs:52
+#: src/window.rs:62
 msgid "Processes"
 msgstr "Процессы"
 
-#: src/window.rs:56
+#: src/window.rs:66
 msgid "Devices"
 msgstr "Устройства"
 
-#: src/window.rs:63
+#: src/window.rs:73
 msgid "Connections"
 msgstr "Соединения"
 
-#: src/window.rs:69
+#: src/window.rs:79
 msgid "Disk Space"
 msgstr "Место на диске"
 
-#: src/window.rs:75
+#: src/window.rs:85
 msgid "Startup"
 msgstr "Автозапуск"
 
-#: src/window.rs:103
+#: src/window.rs:113
 msgid "Search by name, PID, user or command"
 msgstr "Поиск по имени, PID, пользователю или команде"
 
-#: src/window.rs:117
+#: src/window.rs:127
 msgid "Search"
 msgstr "Поиск"
 
-#: src/window.rs:126
+#: src/window.rs:136
 msgid "End Process"
 msgstr "Завершить процесс"
 
-#: src/window.rs:130
+#: src/window.rs:140
 msgid "Show _Kernel Threads"
 msgstr "Показывать потоки _ядра"
 
-#: src/window.rs:131
+#: src/window.rs:141
 msgid "_About Pulse"
 msgstr "_О приложении Pulse"
 
-#: src/window.rs:134
+#: src/window.rs:144
 msgid "Main Menu"
 msgstr "Главное меню"
 
-#: src/window.rs:289
+#: src/window.rs:339
 msgid "{0} process"
 msgid_plural "{0} processes"
 msgstr[0] "{0} процесс"
 msgstr[1] "{0} процесса"
 msgstr[2] "{0} процессов"
 
-#: src/window.rs:290
+#: src/window.rs:340
 msgid "{0} thread"
 msgid_plural "{0} threads"
 msgstr[0] "{0} поток"
 msgstr[1] "{0} потока"
 msgstr[2] "{0} потоков"
 
-#: src/window.rs:299
+#: src/window.rs:349
 msgid "{0} of {1}"
 msgstr "{0} из {1}"
 
-#: src/window.rs:312
+#: src/window.rs:362
 msgid "Read {0} · Write {1}"
 msgstr "Чтение {0} · Запись {1}"
 
-#: src/window.rs:331
+#: src/window.rs:381
 msgid "End “{0}”?"
 msgstr "Завершить «{0}»?"
 
-#: src/window.rs:333
+#: src/window.rs:383
 msgid ""
 "Process {0} will be asked to exit. Force Stop ends it at once, without "
 "letting it save anything."
@@ -213,19 +213,19 @@ msgstr ""
 "Процессу {0} будет отправлена просьба завершиться. «Остановить "
 "принудительно» завершает его сразу, не давая ничего сохранить."
 
-#: src/window.rs:338
+#: src/window.rs:388
 msgid "_Cancel"
 msgstr "_Отмена"
 
-#: src/window.rs:339
+#: src/window.rs:389
 msgid "_Force Stop"
 msgstr "Остановить _принудительно"
 
-#: src/window.rs:340
+#: src/window.rs:390
 msgid "_End Process"
 msgstr "_Завершить процесс"
 
-#: src/window.rs:353
+#: src/window.rs:403
 msgid "Could not end “{0}”: {1}"
 msgstr "Не удалось завершить «{0}»: {1}"
 
@@ -233,7 +233,8 @@ msgstr "Не удалось завершить «{0}»: {1}"
 msgid "Process"
 msgstr "Процесс"
 
-#: src/ui/connections_page.rs:123 src/ui/process_list.rs:182
+#: src/ui/connections_page.rs:123 src/ui/process_details.rs:66
+#: src/ui/process_list.rs:182
 msgid "PID"
 msgstr "PID"
 
@@ -249,7 +250,7 @@ msgstr "Локальный адрес"
 msgid "Remote Address"
 msgstr "Удалённый адрес"
 
-#: src/ui/connections_page.rs:127
+#: src/ui/connections_page.rs:127 src/ui/process_details.rs:68
 msgid "State"
 msgstr "Состояние"
 
@@ -285,13 +286,69 @@ msgstr "Чтение"
 msgid "Write"
 msgstr "Запись"
 
+#: src/ui/process_details.rs:23
+msgid "“{0}” has exited."
+msgstr "Процесс «{0}» завершился."
+
+#: src/ui/process_details.rs:67 src/ui/process_list.rs:187
+msgid "User"
+msgstr "Пользователь"
+
+#: src/ui/process_details.rs:69
+msgid "Parent"
+msgstr "Родитель"
+
+#: src/ui/process_details.rs:70
+msgid "Started"
+msgstr "Запущен"
+
+#: src/ui/process_details.rs:71
+msgid "Nice Value"
+msgstr "Значение nice"
+
+#: src/ui/process_details.rs:72
+msgid "Open Files"
+msgstr "Открытые файлы"
+
+#: src/ui/process_details.rs:73
+msgid "Executable"
+msgstr "Исполняемый файл"
+
+#: src/ui/process_details.rs:74
+msgid "Working Folder"
+msgstr "Рабочая папка"
+
+#: src/ui/process_details.rs:76
+msgid "Command Line"
+msgstr "Командная строка"
+
+#: src/ui/process_details.rs:85
+msgid "Running"
+msgstr "Выполняется"
+
+#: src/ui/process_details.rs:86
+msgid "Sleeping"
+msgstr "Спит"
+
+#: src/ui/process_details.rs:87
+msgid "Waiting for I/O"
+msgstr "Ожидает ввода-вывода"
+
+#: src/ui/process_details.rs:88
+msgid "Idle"
+msgstr "Простаивает"
+
+#: src/ui/process_details.rs:89
+msgid "Stopped"
+msgstr "Остановлен"
+
+#: src/ui/process_details.rs:90
+msgid "Zombie"
+msgstr "Зомби"
+
 #: src/ui/process_list.rs:176 src/ui/space_page.rs:488
 msgid "Name"
 msgstr "Имя"
-
-#: src/ui/process_list.rs:187
-msgid "User"
-msgstr "Пользователь"
 
 #: src/ui/process_list.rs:209
 msgid "Threads"

@@ -129,7 +129,7 @@ impl ConnectionsPage {
         view.sort_by_column(Some(&process), gtk::SortType::Ascending);
 
         let scrolled = gtk::ScrolledWindow::builder()
-            .hscrollbar_policy(gtk::PolicyType::Never)
+            .hscrollbar_policy(gtk::PolicyType::Automatic)
             .vexpand(true)
             .child(&view)
             .build();

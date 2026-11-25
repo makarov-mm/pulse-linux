@@ -10,12 +10,17 @@ use gtk::{gio, glib};
 use crate::format;
 use crate::i18n::{tr, trf, trn};
 use crate::telemetry::{self, Frame, Sampler, sockets};
-use crate::ui::{ConnectionsPage, DevicesPage, MetricCard, ProcessList, ProcessObject, SpacePage, StartupPage};
+use crate::ui::{
+    ConnectionsPage, DevicesPage, MetricCard, ProcessList, ProcessObject, SpacePage, StartupPage,
+    present_process_details,
+};
 
 const SAMPLE_INTERVAL: Duration = Duration::from_secs(1);
 const PROCESSES_PAGE: &str = "processes";
 const CONNECTIONS_PAGE: &str = "connections";
 const STARTUP_PAGE: &str = "startup";
+/// Below this width the tabs move to the bottom and the cards form two rows.
+const NARROW_WIDTH: f64 = 900.0;
 /// Reading the socket tables walks every process's descriptors, so it runs less often than sampling.
 const SOCKET_INTERVAL: Duration = Duration::from_secs(2);
 
@@ -39,10 +44,15 @@ pub fn build(app: &adw::Application) -> adw::ApplicationWindow {
         devices: DevicesPage::new(),
     };
     let processes = live.processes.clone();
-    let card_row = gtk::Box::builder().spacing(12).homogeneous(true).build();
-    for card in [&live.cpu, &live.memory, &live.disk, &live.network] {
-        card_row.append(card.widget());
-    }
+    let cards: Vec<gtk::Box> = [&live.cpu, &live.memory, &live.disk, &live.network]
+        .map(|card| card.widget().clone())
+        .into();
+    let card_grid = gtk::Grid::builder()
+        .column_spacing(12)
+        .row_spacing(12)
+        .column_homogeneous(true)
+        .build();
+    arrange(&card_grid, &cards, cards.len());
 
     let toasts = adw::ToastOverlay::new();
     let space = SpacePage::new();
@@ -95,7 +105,7 @@ pub fn build(app: &adw::Application) -> adw::ApplicationWindow {
         .margin_start(12)
         .margin_end(12)
         .build();
-    content.append(&card_row);
+    content.append(&card_grid);
     content.append(&stack);
     toasts.set_child(Some(&content));
 
@@ -144,17 +154,37 @@ pub fn build(app: &adw::Application) -> adw::ApplicationWindow {
     header.pack_start(&search_button);
     header.pack_end(&menu_button);
     header.pack_end(&end_button);
+    let switcher_bar = adw::ViewSwitcherBar::builder().stack(&stack).build();
     let view = adw::ToolbarView::builder().content(&toasts).build();
     view.add_top_bar(&header);
     view.add_top_bar(&search_bar);
+    view.add_bottom_bar(&switcher_bar);
 
     let window = adw::ApplicationWindow::builder()
         .application(app)
         .title("Pulse")
         .default_width(1100)
         .default_height(760)
+        .width_request(420)
+        .height_request(560)
         .content(&view)
         .build();
+
+    // A narrow window shows its title in the header, the tabs in a bar at the bottom and the cards two by two.
+    let narrow = adw::Breakpoint::new(adw::BreakpointCondition::new_length(
+        adw::BreakpointConditionLengthType::MaxWidth,
+        NARROW_WIDTH,
+        adw::LengthUnit::Sp,
+    ));
+    let title = adw::WindowTitle::new("Pulse", "");
+    narrow.add_setter(&header, "title-widget", Some(&title.to_value()));
+    narrow.add_setter(&switcher_bar, "reveal", Some(&true.to_value()));
+    narrow.connect_apply({
+        let (grid, cards) = (card_grid.clone(), cards.clone());
+        move |_| arrange(&grid, &cards, 2)
+    });
+    narrow.connect_unapply(move |_| arrange(&card_grid, &cards, cards.len()));
+    window.add_breakpoint(narrow);
     search_bar.set_key_capture_widget(Some(&window));
 
     // Search and End Process belong to the process table only.
@@ -173,9 +203,29 @@ pub fn build(app: &adw::Application) -> adw::ApplicationWindow {
         }
     });
 
+    processes.connect_activated({
+        let (window, toasts) = (window.downgrade(), toasts.clone());
+        move |process| {
+            if let Some(window) = window.upgrade() {
+                present_process_details(&window, &toasts, &process);
+            }
+        }
+    });
     add_actions(&window, &processes, &search_bar, &stack, &toasts);
     start_sampling(&window, live);
     window
+}
+
+/// Lays the cards out in rows of `columns`.
+fn arrange(grid: &gtk::Grid, cards: &[gtk::Box], columns: usize) {
+    for card in cards {
+        if card.parent().is_some() {
+            grid.remove(card);
+        }
+    }
+    for (index, card) in cards.iter().enumerate() {
+        grid.attach(card, (index % columns) as i32, (index / columns) as i32, 1, 1);
+    }
 }
 
 fn add_actions(

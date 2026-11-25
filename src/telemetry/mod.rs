@@ -234,6 +234,41 @@ fn rates(
     (samples, incoming, outgoing)
 }
 
+/// The details of one process, read when its dialog opens.
+#[derive(Clone, Debug)]
+pub struct ProcessDetails {
+    /// The one-letter state from `/proc/<pid>/stat`, such as `R` or `S`.
+    pub state: char,
+    pub parent: i32,
+    pub parent_name: String,
+    pub nice: i64,
+    /// Seconds since the Unix epoch.
+    pub started: Option<i64>,
+    pub executable: Option<String>,
+    pub directory: Option<String>,
+    pub open_files: Option<usize>,
+    pub command: String,
+}
+
+/// `None` when the process has exited.
+pub fn details(key: ProcessKey) -> Option<ProcessDetails> {
+    let info = procfs::info(key)?;
+    let ticks = rustix::param::clock_ticks_per_second();
+    Some(ProcessDetails {
+        state: info.state,
+        parent: info.parent,
+        parent_name: std::fs::read_to_string(format!("/proc/{}/comm", info.parent))
+            .map(|name| name.trim_end().to_owned())
+            .unwrap_or_default(),
+        nice: info.nice,
+        started: procfs::boot_time().and_then(|boot| i64::try_from(boot + key.start_time / ticks).ok()),
+        executable: info.executable,
+        directory: info.directory,
+        open_files: info.open_files,
+        command: procfs::command_line(key.pid),
+    })
+}
+
 /// Asks a process to exit with SIGTERM, or stops it at once with SIGKILL when `force` is set.
 ///
 /// The pidfd is opened first and the start time checked afterwards, so the signal
@@ -290,6 +325,31 @@ mod tests {
         assert!(child.try_wait().expect("the child can be polled").is_none());
         child.kill().expect("the child is cleaned up");
         child.wait().expect("the child is reaped");
+    }
+
+    #[test]
+    fn details_describe_this_process_and_reject_a_stale_key() {
+        let pid = std::process::id() as i32;
+        let key = ProcessKey {
+            pid,
+            start_time: procfs::start_time(pid).expect("this process is readable"),
+        };
+        let own = details(key).expect("this process has details");
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("the clock is set");
+        assert!(own.executable.is_some() && own.open_files.is_some_and(|count| count > 0) && !own.command.is_empty());
+        assert!(
+            own.started
+                .is_some_and(|started| started <= now.as_secs() as i64 && started > 0)
+        );
+        assert!(
+            details(ProcessKey {
+                pid,
+                start_time: key.start_time + 1
+            })
+            .is_none()
+        );
     }
 
     #[test]

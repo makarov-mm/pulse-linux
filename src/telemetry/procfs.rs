@@ -165,6 +165,50 @@ pub fn start_time(pid: i32) -> Option<u64> {
     process(pid).map(|stat| stat.key.start_time)
 }
 
+/// What the details dialog shows beyond the sampled values.
+pub struct ProcessInfo {
+    /// The one-letter state from `/proc/<pid>/stat`, such as `R` or `S`.
+    pub state: char,
+    pub parent: i32,
+    pub nice: i64,
+    pub executable: Option<String>,
+    pub directory: Option<String>,
+    pub open_files: Option<usize>,
+}
+
+/// Reads the details of one process instance. `None` when it has exited or its PID was reused.
+pub fn info(key: ProcessKey) -> Option<ProcessInfo> {
+    let directory = format!("/proc/{}", key.pid);
+    let stat = fs::read_to_string(format!("{directory}/stat")).ok()?;
+    let fields: Vec<&str> = stat.rsplit_once(')')?.1.split_ascii_whitespace().collect();
+    // As in `process`, field N of proc(5) is at index N - 3.
+    let field = |number: usize| fields.get(number - 3).copied();
+    if field(22)?.parse::<u64>().ok()? != key.start_time {
+        return None;
+    }
+    let link = |name: &str| {
+        fs::read_link(format!("{directory}/{name}"))
+            .ok()
+            .map(|path| path.to_string_lossy().into_owned())
+    };
+    Some(ProcessInfo {
+        state: field(3)?.chars().next()?,
+        parent: field(4)?.parse().ok()?,
+        nice: field(19)?.parse().ok()?,
+        // These three are readable for the user's own processes, or as root.
+        executable: link("exe"),
+        directory: link("cwd"),
+        open_files: fs::read_dir(format!("{directory}/fd")).ok().map(Iterator::count),
+    })
+}
+
+/// Seconds since the Unix epoch at which the system booted.
+pub fn boot_time() -> Option<u64> {
+    let stat = fs::read_to_string("/proc/stat").ok()?;
+    stat.lines()
+        .find_map(|line| line.strip_prefix("btime ")?.trim().parse().ok())
+}
+
 /// The arguments the process was started with, separated by spaces. Empty for kernel threads.
 pub fn command_line(pid: i32) -> String {
     let Ok(mut raw) = fs::read(format!("/proc/{pid}/cmdline")) else {

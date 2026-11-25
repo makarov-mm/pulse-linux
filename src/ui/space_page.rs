@@ -148,7 +148,10 @@ impl SpacePage {
             .model(&target_names)
             .tooltip_text(tr("Folder to scan"))
             .build();
-        let choose = gtk::Button::builder().label(tr("Choose Folder…")).build();
+        let choose = gtk::Button::builder()
+            .icon_name("folder-open-symbolic")
+            .tooltip_text(tr("Choose Folder…"))
+            .build();
         let scan_button = gtk::Button::builder()
             .label(tr("Scan"))
             .css_classes(["suggested-action"])
@@ -164,7 +167,10 @@ impl SpacePage {
             .hexpand(true)
             .ellipsize(pango::EllipsizeMode::Start)
             .build();
-        let status = gtk::Label::builder().css_classes(["dim-label", "numeric"]).build();
+        let status = gtk::Label::builder()
+            .css_classes(["dim-label", "numeric"])
+            .ellipsize(pango::EllipsizeMode::End)
+            .build();
 
         let bar = gtk::Box::builder().spacing(8).build();
         for widget in [

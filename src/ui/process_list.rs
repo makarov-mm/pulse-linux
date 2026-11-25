@@ -222,7 +222,7 @@ impl ProcessList {
         view.sort_by_column(Some(&cpu), gtk::SortType::Descending);
 
         let root = gtk::ScrolledWindow::builder()
-            .hscrollbar_policy(gtk::PolicyType::Never)
+            .hscrollbar_policy(gtk::PolicyType::Automatic)
             .vexpand(true)
             .child(&view)
             .build();
@@ -287,6 +287,16 @@ impl ProcessList {
 
     pub fn selected(&self) -> Option<ProcessObject> {
         self.selection.selected_item().and_downcast()
+    }
+
+    /// Calls `callback` when a row is activated: double-clicked, or Enter is pressed on it.
+    pub fn connect_activated(&self, callback: impl Fn(ProcessObject) + 'static) {
+        let selection = self.selection.clone();
+        self.view.connect_activate(move |_, position| {
+            if let Some(process) = selection.item(position).and_downcast() {
+                callback(process);
+            }
+        });
     }
 
     pub fn connect_selection_changed(&self, callback: impl Fn(Option<ProcessObject>) + 'static) {
