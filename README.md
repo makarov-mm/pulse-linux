@@ -37,7 +37,7 @@ meson test -C builddir
 
 ## Translating
 
-Source strings are English and go through gettext. To add a language, add its code to `po/LINGUAS`, create the catalogue and translate it:
+Source strings are English and go through gettext. The catalogues in `po/` cover German, Spanish, French, Italian, Japanese, Polish, Brazilian Portuguese, Russian, Ukrainian and Simplified Chinese; all but the Russian one were translated by machine and are waiting for a native reader. To add a language, add its code to `po/LINGUAS`, create the catalogue and translate it:
 
 ```sh
 meson compile -C builddir pulse-pot

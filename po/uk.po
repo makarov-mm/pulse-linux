@@ -1,0 +1,455 @@
+# Ukrainian translation for Pulse.
+# This file is distributed under the same license as the Pulse package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pulse\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-26 00:33+0100\n"
+"PO-Revision-Date: 2026-11-25 23:38+0100\n"
+"Last-Translator: Automatically translated\n"
+"Language-Team: Ukrainian\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:4
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:4
+msgid "Pulse"
+msgstr "Pulse"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:5
+msgid "System Monitor"
+msgstr "Системний монітор"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:6
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:5
+msgid "Watch processes and system resources"
+msgstr "Стежте за процесами та ресурсами системи"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:11
+msgid "process;task;manager;cpu;memory;disk;network;"
+msgstr "процес;завдання;диспетчер;процесор;пам'ять;диск;мережа;"
+
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:9
+msgid "Mykhailo Makarov"
+msgstr "Михайло Макаров"
+
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:12
+msgid ""
+"Pulse shows processor, memory, disk and network load together with the "
+"processes behind it."
+msgstr ""
+"Pulse показує навантаження на процесор, пам’ять, диски та мережу разом із "
+"процесами, які його створюють."
+
+#: src/format.rs:8
+msgid "B"
+msgstr "Б"
+
+#: src/format.rs:8
+msgid "KiB"
+msgstr "КіБ"
+
+#: src/format.rs:8
+msgid "MiB"
+msgstr "МіБ"
+
+#: src/format.rs:8
+msgid "GiB"
+msgstr "ГіБ"
+
+#: src/format.rs:8
+msgid "TiB"
+msgstr "ТіБ"
+
+#: src/format.rs:52
+msgid "{0}/s"
+msgstr "{0}/с"
+
+#. Translators: put your name here, one translator per line.
+#: src/main.rs:48
+msgid "translator-credits"
+msgstr ""
+
+#: src/telemetry/sockets.rs:116
+msgid "Established"
+msgstr "Встановлено"
+
+#: src/telemetry/sockets.rs:117
+msgid "SYN sent"
+msgstr "SYN надіслано"
+
+#: src/telemetry/sockets.rs:118
+msgid "SYN received"
+msgstr "SYN отримано"
+
+#: src/telemetry/sockets.rs:119
+msgid "FIN wait 1"
+msgstr "Очікування FIN 1"
+
+#: src/telemetry/sockets.rs:120
+msgid "FIN wait 2"
+msgstr "Очікування FIN 2"
+
+#: src/telemetry/sockets.rs:121
+msgid "Time wait"
+msgstr "Очікування тайм-ауту"
+
+#: src/telemetry/sockets.rs:122
+msgid "Closed"
+msgstr "Закрито"
+
+#: src/telemetry/sockets.rs:123
+msgid "Close wait"
+msgstr "Очікування закриття"
+
+#: src/telemetry/sockets.rs:124
+msgid "Last ACK"
+msgstr "Останній ACK"
+
+#: src/telemetry/sockets.rs:125
+msgid "Listening"
+msgstr "Прослуховування"
+
+#: src/telemetry/sockets.rs:126
+msgid "Closing"
+msgstr "Закривається"
+
+#: src/window.rs:40 src/ui/process_list.rs:223
+msgid "CPU"
+msgstr "ЦП"
+
+#: src/window.rs:41 src/ui/process_list.rs:230
+msgid "Memory"
+msgstr "Пам’ять"
+
+#: src/window.rs:42 src/ui/process_list.rs:237
+msgid "Disk"
+msgstr "Диск"
+
+#: src/window.rs:43
+msgid "Network"
+msgstr "Мережа"
+
+#: src/window.rs:63
+msgid "Processes"
+msgstr "Процеси"
+
+#: src/window.rs:67
+msgid "Devices"
+msgstr "Пристрої"
+
+#: src/window.rs:74
+msgid "Connections"
+msgstr "З’єднання"
+
+#: src/window.rs:80
+msgid "Disk Space"
+msgstr "Місце на диску"
+
+#: src/window.rs:86
+msgid "Startup"
+msgstr "Автозапуск"
+
+#: src/window.rs:114
+msgid "Search by name, PID, user or command"
+msgstr "Пошук за назвою, PID, користувачем або командою"
+
+#: src/window.rs:128
+msgid "Search"
+msgstr "Пошук"
+
+#: src/window.rs:137
+msgid "End Process"
+msgstr "Завершити процес"
+
+#: src/window.rs:141
+msgid "Show as _Tree"
+msgstr "Показувати _деревом"
+
+#: src/window.rs:142
+msgid "Show _Kernel Threads"
+msgstr "Показувати потоки _ядра"
+
+#: src/window.rs:143
+msgid "_About Pulse"
+msgstr "_Про Pulse"
+
+#: src/window.rs:146
+msgid "Main Menu"
+msgstr "Головне меню"
+
+#: src/window.rs:368
+msgid "{0} process"
+msgid_plural "{0} processes"
+msgstr[0] "{0} процес"
+msgstr[1] "{0} процеси"
+msgstr[2] "{0} процесів"
+
+#: src/window.rs:369
+msgid "{0} thread"
+msgid_plural "{0} threads"
+msgstr[0] "{0} потік"
+msgstr[1] "{0} потоки"
+msgstr[2] "{0} потоків"
+
+#: src/window.rs:378
+msgid "{0} of {1}"
+msgstr "{0} з {1}"
+
+#: src/window.rs:391
+msgid "Read {0} · Write {1}"
+msgstr "Читання {0} · Запис {1}"
+
+#: src/window.rs:410
+msgid "End “{0}”?"
+msgstr "Завершити «{0}»?"
+
+#: src/window.rs:412
+msgid ""
+"Process {0} will be asked to exit. Force Stop ends it at once, without "
+"letting it save anything."
+msgstr ""
+"Процес {0} отримає запит на завершення. «Зупинити примусово» завершує його "
+"негайно, не даючи нічого зберегти."
+
+#: src/window.rs:417
+msgid "_Cancel"
+msgstr "_Скасувати"
+
+#: src/window.rs:418
+msgid "_Force Stop"
+msgstr "Зупинити _примусово"
+
+#: src/window.rs:419
+msgid "_End Process"
+msgstr "_Завершити процес"
+
+#: src/window.rs:432
+msgid "Could not end “{0}”: {1}"
+msgstr "Не вдалося завершити «{0}»: {1}"
+
+#: src/ui/connections_page.rs:121
+msgid "Process"
+msgstr "Процес"
+
+#: src/ui/connections_page.rs:123 src/ui/process_details.rs:66
+#: src/ui/process_list.rs:217
+msgid "PID"
+msgstr "PID"
+
+#: src/ui/connections_page.rs:124
+msgid "Protocol"
+msgstr "Протокол"
+
+#: src/ui/connections_page.rs:125
+msgid "Local Address"
+msgstr "Локальна адреса"
+
+#: src/ui/connections_page.rs:126
+msgid "Remote Address"
+msgstr "Віддалена адреса"
+
+#: src/ui/connections_page.rs:127 src/ui/process_details.rs:68
+msgid "State"
+msgstr "Стан"
+
+#: src/ui/connections_page.rs:138
+msgid ""
+"Sockets of other users’ processes are listed without an owner unless Pulse "
+"runs as root."
+msgstr ""
+"Сокети процесів інших користувачів показано без власника, якщо Pulse не "
+"запущено від імені root."
+
+#: src/ui/devices_page.rs:96
+msgid "Processors"
+msgstr "Процесори"
+
+#: src/ui/devices_page.rs:97
+msgid "Disks"
+msgstr "Диски"
+
+#: src/ui/devices_page.rs:98
+msgid "Network Interfaces"
+msgstr "Мережеві інтерфейси"
+
+#: src/ui/devices_page.rs:130
+msgid "CPU {0}"
+msgstr "ЦП {0}"
+
+#: src/ui/devices_page.rs:137
+msgid "Read"
+msgstr "Читання"
+
+#: src/ui/devices_page.rs:137
+msgid "Write"
+msgstr "Запис"
+
+#: src/ui/process_details.rs:23
+msgid "“{0}” has exited."
+msgstr "Процес «{0}» завершився."
+
+#: src/ui/process_details.rs:67 src/ui/process_list.rs:222
+msgid "User"
+msgstr "Користувач"
+
+#: src/ui/process_details.rs:69
+msgid "Parent"
+msgstr "Батьківський процес"
+
+#: src/ui/process_details.rs:70
+msgid "Started"
+msgstr "Запущено"
+
+#: src/ui/process_details.rs:71
+msgid "Nice Value"
+msgstr "Значення nice"
+
+#: src/ui/process_details.rs:72
+msgid "Open Files"
+msgstr "Відкриті файли"
+
+#: src/ui/process_details.rs:73
+msgid "Executable"
+msgstr "Виконуваний файл"
+
+#: src/ui/process_details.rs:74
+msgid "Working Folder"
+msgstr "Робоча тека"
+
+#: src/ui/process_details.rs:76
+msgid "Command Line"
+msgstr "Командний рядок"
+
+#: src/ui/process_details.rs:85
+msgid "Running"
+msgstr "Виконується"
+
+#: src/ui/process_details.rs:86
+msgid "Sleeping"
+msgstr "Спить"
+
+#: src/ui/process_details.rs:87
+msgid "Waiting for I/O"
+msgstr "Очікує введення-виведення"
+
+#: src/ui/process_details.rs:88
+msgid "Idle"
+msgstr "Простоює"
+
+#: src/ui/process_details.rs:89
+msgid "Stopped"
+msgstr "Зупинено"
+
+#: src/ui/process_details.rs:90
+msgid "Zombie"
+msgstr "Зомбі"
+
+#: src/ui/process_list.rs:211 src/ui/space_page.rs:494
+msgid "Name"
+msgstr "Назва"
+
+#: src/ui/process_list.rs:244
+msgid "Threads"
+msgstr "Потоки"
+
+#: src/ui/space_page.rs:94
+msgid "{0} smaller file"
+msgid_plural "{0} smaller files"
+msgstr[0] "{0} менший файл"
+msgstr[1] "{0} менші файли"
+msgstr[2] "{0} менших файлів"
+
+#: src/ui/space_page.rs:96
+msgid "{0} (not fully readable)"
+msgstr "{0} (прочитано не повністю)"
+
+#: src/ui/space_page.rs:146
+msgid "Home"
+msgstr "Домівка"
+
+#: src/ui/space_page.rs:146
+msgid "File System"
+msgstr "Файлова система"
+
+#: src/ui/space_page.rs:149
+msgid "Folder to scan"
+msgstr "Тека для сканування"
+
+#: src/ui/space_page.rs:153
+msgid "Choose Folder…"
+msgstr "Вибрати теку…"
+
+#: src/ui/space_page.rs:156 src/ui/space_page.rs:353
+msgid "Scan"
+msgstr "Сканувати"
+
+#: src/ui/space_page.rs:161
+msgid "Parent Folder"
+msgstr "Батьківська тека"
+
+#: src/ui/space_page.rs:165
+msgid "Choose a folder and press Scan."
+msgstr "Виберіть теку й натисніть «Сканувати»."
+
+#: src/ui/space_page.rs:322
+msgid "Could not start the scan: {0}"
+msgstr "Не вдалося почати сканування: {0}"
+
+#: src/ui/space_page.rs:335
+msgid "Cancel"
+msgstr "Скасувати"
+
+#: src/ui/space_page.rs:361
+msgid "Choose a Folder to Scan"
+msgstr "Виберіть теку для сканування"
+
+#: src/ui/space_page.rs:462
+msgid "Scanning…"
+msgstr "Сканування…"
+
+#: src/ui/space_page.rs:463
+msgid "Cancelled"
+msgstr "Скасовано"
+
+#: src/ui/space_page.rs:464
+msgid "Some folders could not be read"
+msgstr "Деякі теки не вдалося прочитати"
+
+#: src/ui/space_page.rs:518
+msgid "Size on Disk"
+msgstr "Розмір на диску"
+
+#: src/ui/space_page.rs:553
+msgid "Share"
+msgstr "Частка"
+
+#: src/ui/startup_page.rs:29
+msgid ""
+"Programs that start when you log in. A change applies to your account only."
+msgstr ""
+"Програми, які запускаються під час входу в систему. Зміна стосується лише "
+"вашого облікового запису."
+
+#: src/ui/startup_page.rs:38
+msgid "No Startup Programs"
+msgstr "Немає програм автозапуску"
+
+#: src/ui/startup_page.rs:39
+msgid "Nothing is set to start when you log in."
+msgstr "Під час входу в систему нічого не запускається."
+
+#: src/ui/startup_page.rs:106
+msgid "Could not change “{0}”: {1}"
+msgstr "Не вдалося змінити «{0}»: {1}"
+
+#: src/ui/treemap.rs:85
+msgid "{0} smaller item"
+msgid_plural "{0} smaller items"
+msgstr[0] "{0} менший елемент"
+msgstr[1] "{0} менші елементи"
+msgstr[2] "{0} менших елементів"

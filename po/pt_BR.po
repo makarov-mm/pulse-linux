@@ -1,0 +1,451 @@
+# Brazilian Portuguese translation for Pulse.
+# This file is distributed under the same license as the Pulse package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pulse\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-26 00:33+0100\n"
+"PO-Revision-Date: 2026-11-25 23:38+0100\n"
+"Last-Translator: Automatically translated\n"
+"Language-Team: Brazilian Portuguese\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:4
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:4
+msgid "Pulse"
+msgstr "Pulse"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:5
+msgid "System Monitor"
+msgstr "Monitor do sistema"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:6
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:5
+msgid "Watch processes and system resources"
+msgstr "Acompanhe os processos e os recursos do sistema"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:11
+msgid "process;task;manager;cpu;memory;disk;network;"
+msgstr "processo;tarefa;gerenciador;cpu;memória;disco;rede;"
+
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:9
+msgid "Mykhailo Makarov"
+msgstr "Mykhailo Makarov"
+
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:12
+msgid ""
+"Pulse shows processor, memory, disk and network load together with the "
+"processes behind it."
+msgstr ""
+"O Pulse mostra a carga do processador, da memória, dos discos e da rede "
+"junto com os processos responsáveis por ela."
+
+#: src/format.rs:8
+msgid "B"
+msgstr "B"
+
+#: src/format.rs:8
+msgid "KiB"
+msgstr "KiB"
+
+#: src/format.rs:8
+msgid "MiB"
+msgstr "MiB"
+
+#: src/format.rs:8
+msgid "GiB"
+msgstr "GiB"
+
+#: src/format.rs:8
+msgid "TiB"
+msgstr "TiB"
+
+#: src/format.rs:52
+msgid "{0}/s"
+msgstr "{0}/s"
+
+#. Translators: put your name here, one translator per line.
+#: src/main.rs:48
+msgid "translator-credits"
+msgstr ""
+
+#: src/telemetry/sockets.rs:116
+msgid "Established"
+msgstr "Estabelecida"
+
+#: src/telemetry/sockets.rs:117
+msgid "SYN sent"
+msgstr "SYN enviado"
+
+#: src/telemetry/sockets.rs:118
+msgid "SYN received"
+msgstr "SYN recebido"
+
+#: src/telemetry/sockets.rs:119
+msgid "FIN wait 1"
+msgstr "Espera FIN 1"
+
+#: src/telemetry/sockets.rs:120
+msgid "FIN wait 2"
+msgstr "Espera FIN 2"
+
+#: src/telemetry/sockets.rs:121
+msgid "Time wait"
+msgstr "Tempo de espera"
+
+#: src/telemetry/sockets.rs:122
+msgid "Closed"
+msgstr "Fechada"
+
+#: src/telemetry/sockets.rs:123
+msgid "Close wait"
+msgstr "Aguardando fechamento"
+
+#: src/telemetry/sockets.rs:124
+msgid "Last ACK"
+msgstr "Último ACK"
+
+#: src/telemetry/sockets.rs:125
+msgid "Listening"
+msgstr "Escutando"
+
+#: src/telemetry/sockets.rs:126
+msgid "Closing"
+msgstr "Fechando"
+
+#: src/window.rs:40 src/ui/process_list.rs:223
+msgid "CPU"
+msgstr "CPU"
+
+#: src/window.rs:41 src/ui/process_list.rs:230
+msgid "Memory"
+msgstr "Memória"
+
+#: src/window.rs:42 src/ui/process_list.rs:237
+msgid "Disk"
+msgstr "Disco"
+
+#: src/window.rs:43
+msgid "Network"
+msgstr "Rede"
+
+#: src/window.rs:63
+msgid "Processes"
+msgstr "Processos"
+
+#: src/window.rs:67
+msgid "Devices"
+msgstr "Dispositivos"
+
+#: src/window.rs:74
+msgid "Connections"
+msgstr "Conexões"
+
+#: src/window.rs:80
+msgid "Disk Space"
+msgstr "Espaço em disco"
+
+#: src/window.rs:86
+msgid "Startup"
+msgstr "Inicialização"
+
+#: src/window.rs:114
+msgid "Search by name, PID, user or command"
+msgstr "Pesquisar por nome, PID, usuário ou comando"
+
+#: src/window.rs:128
+msgid "Search"
+msgstr "Pesquisar"
+
+#: src/window.rs:137
+msgid "End Process"
+msgstr "Encerrar processo"
+
+#: src/window.rs:141
+msgid "Show as _Tree"
+msgstr "Mostrar como á_rvore"
+
+#: src/window.rs:142
+msgid "Show _Kernel Threads"
+msgstr "Mostrar threads do _kernel"
+
+#: src/window.rs:143
+msgid "_About Pulse"
+msgstr "_Sobre o Pulse"
+
+#: src/window.rs:146
+msgid "Main Menu"
+msgstr "Menu principal"
+
+#: src/window.rs:368
+msgid "{0} process"
+msgid_plural "{0} processes"
+msgstr[0] "{0} processo"
+msgstr[1] "{0} processos"
+
+#: src/window.rs:369
+msgid "{0} thread"
+msgid_plural "{0} threads"
+msgstr[0] "{0} thread"
+msgstr[1] "{0} threads"
+
+#: src/window.rs:378
+msgid "{0} of {1}"
+msgstr "{0} de {1}"
+
+#: src/window.rs:391
+msgid "Read {0} · Write {1}"
+msgstr "Leitura {0} · Gravação {1}"
+
+#: src/window.rs:410
+msgid "End “{0}”?"
+msgstr "Encerrar “{0}”?"
+
+#: src/window.rs:412
+msgid ""
+"Process {0} will be asked to exit. Force Stop ends it at once, without "
+"letting it save anything."
+msgstr ""
+"O processo {0} será solicitado a sair. “Forçar parada” o encerra "
+"imediatamente, sem deixar que salve nada."
+
+#: src/window.rs:417
+msgid "_Cancel"
+msgstr "_Cancelar"
+
+#: src/window.rs:418
+msgid "_Force Stop"
+msgstr "_Forçar parada"
+
+#: src/window.rs:419
+msgid "_End Process"
+msgstr "_Encerrar processo"
+
+#: src/window.rs:432
+msgid "Could not end “{0}”: {1}"
+msgstr "Não foi possível encerrar “{0}”: {1}"
+
+#: src/ui/connections_page.rs:121
+msgid "Process"
+msgstr "Processo"
+
+#: src/ui/connections_page.rs:123 src/ui/process_details.rs:66
+#: src/ui/process_list.rs:217
+msgid "PID"
+msgstr "PID"
+
+#: src/ui/connections_page.rs:124
+msgid "Protocol"
+msgstr "Protocolo"
+
+#: src/ui/connections_page.rs:125
+msgid "Local Address"
+msgstr "Endereço local"
+
+#: src/ui/connections_page.rs:126
+msgid "Remote Address"
+msgstr "Endereço remoto"
+
+#: src/ui/connections_page.rs:127 src/ui/process_details.rs:68
+msgid "State"
+msgstr "Estado"
+
+#: src/ui/connections_page.rs:138
+msgid ""
+"Sockets of other users’ processes are listed without an owner unless Pulse "
+"runs as root."
+msgstr ""
+"Os sockets de processos de outros usuários são listados sem dono, a menos "
+"que o Pulse seja executado como root."
+
+#: src/ui/devices_page.rs:96
+msgid "Processors"
+msgstr "Processadores"
+
+#: src/ui/devices_page.rs:97
+msgid "Disks"
+msgstr "Discos"
+
+#: src/ui/devices_page.rs:98
+msgid "Network Interfaces"
+msgstr "Interfaces de rede"
+
+#: src/ui/devices_page.rs:130
+msgid "CPU {0}"
+msgstr "CPU {0}"
+
+#: src/ui/devices_page.rs:137
+msgid "Read"
+msgstr "Leitura"
+
+#: src/ui/devices_page.rs:137
+msgid "Write"
+msgstr "Gravação"
+
+#: src/ui/process_details.rs:23
+msgid "“{0}” has exited."
+msgstr "“{0}” foi encerrado."
+
+#: src/ui/process_details.rs:67 src/ui/process_list.rs:222
+msgid "User"
+msgstr "Usuário"
+
+#: src/ui/process_details.rs:69
+msgid "Parent"
+msgstr "Processo pai"
+
+#: src/ui/process_details.rs:70
+msgid "Started"
+msgstr "Iniciado"
+
+#: src/ui/process_details.rs:71
+msgid "Nice Value"
+msgstr "Valor nice"
+
+#: src/ui/process_details.rs:72
+msgid "Open Files"
+msgstr "Arquivos abertos"
+
+#: src/ui/process_details.rs:73
+msgid "Executable"
+msgstr "Executável"
+
+#: src/ui/process_details.rs:74
+msgid "Working Folder"
+msgstr "Pasta de trabalho"
+
+#: src/ui/process_details.rs:76
+msgid "Command Line"
+msgstr "Linha de comando"
+
+#: src/ui/process_details.rs:85
+msgid "Running"
+msgstr "Em execução"
+
+#: src/ui/process_details.rs:86
+msgid "Sleeping"
+msgstr "Dormindo"
+
+#: src/ui/process_details.rs:87
+msgid "Waiting for I/O"
+msgstr "Aguardando E/S"
+
+#: src/ui/process_details.rs:88
+msgid "Idle"
+msgstr "Ocioso"
+
+#: src/ui/process_details.rs:89
+msgid "Stopped"
+msgstr "Parado"
+
+#: src/ui/process_details.rs:90
+msgid "Zombie"
+msgstr "Zumbi"
+
+#: src/ui/process_list.rs:211 src/ui/space_page.rs:494
+msgid "Name"
+msgstr "Nome"
+
+#: src/ui/process_list.rs:244
+msgid "Threads"
+msgstr "Threads"
+
+#: src/ui/space_page.rs:94
+msgid "{0} smaller file"
+msgid_plural "{0} smaller files"
+msgstr[0] "{0} arquivo menor"
+msgstr[1] "{0} arquivos menores"
+
+#: src/ui/space_page.rs:96
+msgid "{0} (not fully readable)"
+msgstr "{0} (leitura incompleta)"
+
+#: src/ui/space_page.rs:146
+msgid "Home"
+msgstr "Pasta pessoal"
+
+#: src/ui/space_page.rs:146
+msgid "File System"
+msgstr "Sistema de arquivos"
+
+#: src/ui/space_page.rs:149
+msgid "Folder to scan"
+msgstr "Pasta a analisar"
+
+#: src/ui/space_page.rs:153
+msgid "Choose Folder…"
+msgstr "Escolher pasta…"
+
+#: src/ui/space_page.rs:156 src/ui/space_page.rs:353
+msgid "Scan"
+msgstr "Analisar"
+
+#: src/ui/space_page.rs:161
+msgid "Parent Folder"
+msgstr "Pasta pai"
+
+#: src/ui/space_page.rs:165
+msgid "Choose a folder and press Scan."
+msgstr "Escolha uma pasta e pressione Analisar."
+
+#: src/ui/space_page.rs:322
+msgid "Could not start the scan: {0}"
+msgstr "Não foi possível iniciar a análise: {0}"
+
+#: src/ui/space_page.rs:335
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/ui/space_page.rs:361
+msgid "Choose a Folder to Scan"
+msgstr "Escolha uma pasta para analisar"
+
+#: src/ui/space_page.rs:462
+msgid "Scanning…"
+msgstr "Analisando…"
+
+#: src/ui/space_page.rs:463
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#: src/ui/space_page.rs:464
+msgid "Some folders could not be read"
+msgstr "Algumas pastas não puderam ser lidas"
+
+#: src/ui/space_page.rs:518
+msgid "Size on Disk"
+msgstr "Tamanho em disco"
+
+#: src/ui/space_page.rs:553
+msgid "Share"
+msgstr "Parcela"
+
+#: src/ui/startup_page.rs:29
+msgid ""
+"Programs that start when you log in. A change applies to your account only."
+msgstr ""
+"Programas que iniciam quando você entra na sessão. A alteração vale apenas "
+"para a sua conta."
+
+#: src/ui/startup_page.rs:38
+msgid "No Startup Programs"
+msgstr "Nenhum programa de inicialização"
+
+#: src/ui/startup_page.rs:39
+msgid "Nothing is set to start when you log in."
+msgstr "Nada está configurado para iniciar quando você entra na sessão."
+
+#: src/ui/startup_page.rs:106
+msgid "Could not change “{0}”: {1}"
+msgstr "Não foi possível alterar “{0}”: {1}"
+
+#: src/ui/treemap.rs:85
+msgid "{0} smaller item"
+msgid_plural "{0} smaller items"
+msgstr[0] "{0} item menor"
+msgstr[1] "{0} itens menores"

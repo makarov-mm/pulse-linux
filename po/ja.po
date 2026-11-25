@@ -1,0 +1,439 @@
+# Japanese translation for Pulse.
+# This file is distributed under the same license as the Pulse package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pulse\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-26 00:33+0100\n"
+"PO-Revision-Date: 2026-11-25 23:38+0100\n"
+"Last-Translator: Automatically translated\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:4
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:4
+msgid "Pulse"
+msgstr "Pulse"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:5
+msgid "System Monitor"
+msgstr "システムモニター"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:6
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:5
+msgid "Watch processes and system resources"
+msgstr "プロセスとシステムリソースを監視します"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:11
+msgid "process;task;manager;cpu;memory;disk;network;"
+msgstr "プロセス;タスク;マネージャー;CPU;メモリ;ディスク;ネットワーク;process;"
+
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:9
+msgid "Mykhailo Makarov"
+msgstr "Mykhailo Makarov"
+
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:12
+msgid ""
+"Pulse shows processor, memory, disk and network load together with the "
+"processes behind it."
+msgstr "Pulse は、プロセッサー、メモリ、ディスク、ネットワークの負荷と、その原因となっているプロセスを表示します。"
+
+#: src/format.rs:8
+msgid "B"
+msgstr "B"
+
+#: src/format.rs:8
+msgid "KiB"
+msgstr "KiB"
+
+#: src/format.rs:8
+msgid "MiB"
+msgstr "MiB"
+
+#: src/format.rs:8
+msgid "GiB"
+msgstr "GiB"
+
+#: src/format.rs:8
+msgid "TiB"
+msgstr "TiB"
+
+#: src/format.rs:52
+msgid "{0}/s"
+msgstr "{0}/秒"
+
+#. Translators: put your name here, one translator per line.
+#: src/main.rs:48
+msgid "translator-credits"
+msgstr ""
+
+#: src/telemetry/sockets.rs:116
+msgid "Established"
+msgstr "確立済み"
+
+#: src/telemetry/sockets.rs:117
+msgid "SYN sent"
+msgstr "SYN 送信済み"
+
+#: src/telemetry/sockets.rs:118
+msgid "SYN received"
+msgstr "SYN 受信済み"
+
+#: src/telemetry/sockets.rs:119
+msgid "FIN wait 1"
+msgstr "FIN 待機 1"
+
+#: src/telemetry/sockets.rs:120
+msgid "FIN wait 2"
+msgstr "FIN 待機 2"
+
+#: src/telemetry/sockets.rs:121
+msgid "Time wait"
+msgstr "タイムアウト待機"
+
+#: src/telemetry/sockets.rs:122
+msgid "Closed"
+msgstr "クローズ済み"
+
+#: src/telemetry/sockets.rs:123
+msgid "Close wait"
+msgstr "クローズ待機"
+
+#: src/telemetry/sockets.rs:124
+msgid "Last ACK"
+msgstr "最終 ACK"
+
+#: src/telemetry/sockets.rs:125
+msgid "Listening"
+msgstr "待ち受け中"
+
+#: src/telemetry/sockets.rs:126
+msgid "Closing"
+msgstr "クローズ中"
+
+#: src/window.rs:40 src/ui/process_list.rs:223
+msgid "CPU"
+msgstr "CPU"
+
+#: src/window.rs:41 src/ui/process_list.rs:230
+msgid "Memory"
+msgstr "メモリ"
+
+#: src/window.rs:42 src/ui/process_list.rs:237
+msgid "Disk"
+msgstr "ディスク"
+
+#: src/window.rs:43
+msgid "Network"
+msgstr "ネットワーク"
+
+#: src/window.rs:63
+msgid "Processes"
+msgstr "プロセス"
+
+#: src/window.rs:67
+msgid "Devices"
+msgstr "デバイス"
+
+#: src/window.rs:74
+msgid "Connections"
+msgstr "接続"
+
+#: src/window.rs:80
+msgid "Disk Space"
+msgstr "ディスク使用量"
+
+#: src/window.rs:86
+msgid "Startup"
+msgstr "自動起動"
+
+#: src/window.rs:114
+msgid "Search by name, PID, user or command"
+msgstr "名前、PID、ユーザー、コマンドで検索"
+
+#: src/window.rs:128
+msgid "Search"
+msgstr "検索"
+
+#: src/window.rs:137
+msgid "End Process"
+msgstr "プロセスを終了"
+
+#: src/window.rs:141
+msgid "Show as _Tree"
+msgstr "ツリーで表示(_T)"
+
+#: src/window.rs:142
+msgid "Show _Kernel Threads"
+msgstr "カーネルスレッドを表示(_K)"
+
+#: src/window.rs:143
+msgid "_About Pulse"
+msgstr "Pulse について(_A)"
+
+#: src/window.rs:146
+msgid "Main Menu"
+msgstr "メインメニュー"
+
+#: src/window.rs:368
+msgid "{0} process"
+msgid_plural "{0} processes"
+msgstr[0] "{0} プロセス"
+
+#: src/window.rs:369
+msgid "{0} thread"
+msgid_plural "{0} threads"
+msgstr[0] "{0} スレッド"
+
+#: src/window.rs:378
+msgid "{0} of {1}"
+msgstr "{0} / {1}"
+
+#: src/window.rs:391
+msgid "Read {0} · Write {1}"
+msgstr "読み取り {0} · 書き込み {1}"
+
+#: src/window.rs:410
+msgid "End “{0}”?"
+msgstr "「{0}」を終了しますか？"
+
+#: src/window.rs:412
+msgid ""
+"Process {0} will be asked to exit. Force Stop ends it at once, without "
+"letting it save anything."
+msgstr "プロセス {0} に終了を要求します。「強制停止」は、何も保存させずに直ちに終了させます。"
+
+#: src/window.rs:417
+msgid "_Cancel"
+msgstr "キャンセル(_C)"
+
+#: src/window.rs:418
+msgid "_Force Stop"
+msgstr "強制停止(_F)"
+
+#: src/window.rs:419
+msgid "_End Process"
+msgstr "プロセスを終了(_E)"
+
+#: src/window.rs:432
+msgid "Could not end “{0}”: {1}"
+msgstr "「{0}」を終了できませんでした: {1}"
+
+#: src/ui/connections_page.rs:121
+msgid "Process"
+msgstr "プロセス"
+
+#: src/ui/connections_page.rs:123 src/ui/process_details.rs:66
+#: src/ui/process_list.rs:217
+msgid "PID"
+msgstr "PID"
+
+#: src/ui/connections_page.rs:124
+msgid "Protocol"
+msgstr "プロトコル"
+
+#: src/ui/connections_page.rs:125
+msgid "Local Address"
+msgstr "ローカルアドレス"
+
+#: src/ui/connections_page.rs:126
+msgid "Remote Address"
+msgstr "リモートアドレス"
+
+#: src/ui/connections_page.rs:127 src/ui/process_details.rs:68
+msgid "State"
+msgstr "状態"
+
+#: src/ui/connections_page.rs:138
+msgid ""
+"Sockets of other users’ processes are listed without an owner unless Pulse "
+"runs as root."
+msgstr "Pulse を root で実行しない限り、他のユーザーのプロセスのソケットは所有者なしで表示されます。"
+
+#: src/ui/devices_page.rs:96
+msgid "Processors"
+msgstr "プロセッサー"
+
+#: src/ui/devices_page.rs:97
+msgid "Disks"
+msgstr "ディスク"
+
+#: src/ui/devices_page.rs:98
+msgid "Network Interfaces"
+msgstr "ネットワークインターフェース"
+
+#: src/ui/devices_page.rs:130
+msgid "CPU {0}"
+msgstr "CPU {0}"
+
+#: src/ui/devices_page.rs:137
+msgid "Read"
+msgstr "読み取り"
+
+#: src/ui/devices_page.rs:137
+msgid "Write"
+msgstr "書き込み"
+
+#: src/ui/process_details.rs:23
+msgid "“{0}” has exited."
+msgstr "「{0}」は終了しました。"
+
+#: src/ui/process_details.rs:67 src/ui/process_list.rs:222
+msgid "User"
+msgstr "ユーザー"
+
+#: src/ui/process_details.rs:69
+msgid "Parent"
+msgstr "親プロセス"
+
+#: src/ui/process_details.rs:70
+msgid "Started"
+msgstr "開始日時"
+
+#: src/ui/process_details.rs:71
+msgid "Nice Value"
+msgstr "nice 値"
+
+#: src/ui/process_details.rs:72
+msgid "Open Files"
+msgstr "開いているファイル"
+
+#: src/ui/process_details.rs:73
+msgid "Executable"
+msgstr "実行ファイル"
+
+#: src/ui/process_details.rs:74
+msgid "Working Folder"
+msgstr "作業フォルダー"
+
+#: src/ui/process_details.rs:76
+msgid "Command Line"
+msgstr "コマンドライン"
+
+#: src/ui/process_details.rs:85
+msgid "Running"
+msgstr "実行中"
+
+#: src/ui/process_details.rs:86
+msgid "Sleeping"
+msgstr "スリープ中"
+
+#: src/ui/process_details.rs:87
+msgid "Waiting for I/O"
+msgstr "I/O 待ち"
+
+#: src/ui/process_details.rs:88
+msgid "Idle"
+msgstr "アイドル"
+
+#: src/ui/process_details.rs:89
+msgid "Stopped"
+msgstr "停止中"
+
+#: src/ui/process_details.rs:90
+msgid "Zombie"
+msgstr "ゾンビ"
+
+#: src/ui/process_list.rs:211 src/ui/space_page.rs:494
+msgid "Name"
+msgstr "名前"
+
+#: src/ui/process_list.rs:244
+msgid "Threads"
+msgstr "スレッド"
+
+#: src/ui/space_page.rs:94
+msgid "{0} smaller file"
+msgid_plural "{0} smaller files"
+msgstr[0] "小さいファイル {0} 個"
+
+#: src/ui/space_page.rs:96
+msgid "{0} (not fully readable)"
+msgstr "{0}（一部読み取り不可）"
+
+#: src/ui/space_page.rs:146
+msgid "Home"
+msgstr "ホーム"
+
+#: src/ui/space_page.rs:146
+msgid "File System"
+msgstr "ファイルシステム"
+
+#: src/ui/space_page.rs:149
+msgid "Folder to scan"
+msgstr "スキャンするフォルダー"
+
+#: src/ui/space_page.rs:153
+msgid "Choose Folder…"
+msgstr "フォルダーを選択…"
+
+#: src/ui/space_page.rs:156 src/ui/space_page.rs:353
+msgid "Scan"
+msgstr "スキャン"
+
+#: src/ui/space_page.rs:161
+msgid "Parent Folder"
+msgstr "親フォルダー"
+
+#: src/ui/space_page.rs:165
+msgid "Choose a folder and press Scan."
+msgstr "フォルダーを選択して「スキャン」を押してください。"
+
+#: src/ui/space_page.rs:322
+msgid "Could not start the scan: {0}"
+msgstr "スキャンを開始できませんでした: {0}"
+
+#: src/ui/space_page.rs:335
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: src/ui/space_page.rs:361
+msgid "Choose a Folder to Scan"
+msgstr "スキャンするフォルダーを選択"
+
+#: src/ui/space_page.rs:462
+msgid "Scanning…"
+msgstr "スキャン中…"
+
+#: src/ui/space_page.rs:463
+msgid "Cancelled"
+msgstr "キャンセルしました"
+
+#: src/ui/space_page.rs:464
+msgid "Some folders could not be read"
+msgstr "一部のフォルダーを読み取れませんでした"
+
+#: src/ui/space_page.rs:518
+msgid "Size on Disk"
+msgstr "ディスク上のサイズ"
+
+#: src/ui/space_page.rs:553
+msgid "Share"
+msgstr "割合"
+
+#: src/ui/startup_page.rs:29
+msgid ""
+"Programs that start when you log in. A change applies to your account only."
+msgstr "ログイン時に起動するプログラムです。変更はあなたのアカウントにのみ適用されます。"
+
+#: src/ui/startup_page.rs:38
+msgid "No Startup Programs"
+msgstr "自動起動プログラムはありません"
+
+#: src/ui/startup_page.rs:39
+msgid "Nothing is set to start when you log in."
+msgstr "ログイン時に起動するものは設定されていません。"
+
+#: src/ui/startup_page.rs:106
+msgid "Could not change “{0}”: {1}"
+msgstr "「{0}」を変更できませんでした: {1}"
+
+#: src/ui/treemap.rs:85
+msgid "{0} smaller item"
+msgid_plural "{0} smaller items"
+msgstr[0] "小さい項目 {0} 個"

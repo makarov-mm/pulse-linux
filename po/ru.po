@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pulse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 00:14+0100\n"
+"POT-Creation-Date: 2026-11-26 00:33+0100\n"
 "PO-Revision-Date: 2026-11-25 23:38+0100\n"
 "Last-Translator: Mykhailo Makarov\n"
 "Language-Team: Russian\n"
@@ -13,7 +13,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: data/io.github.makarov_mm.Pulse.desktop.in:4
 #: data/io.github.makarov_mm.Pulse.metainfo.xml.in:4
@@ -32,7 +33,8 @@ msgstr "Наблюдение за процессами и ресурсами с�
 #: data/io.github.makarov_mm.Pulse.desktop.in:11
 msgid "process;task;manager;cpu;memory;disk;network;"
 msgstr ""
-"процесс;задача;диспетчер;процессор;память;диск;сеть;process;task;manager;cpu;memory;disk;network;"
+"процесс;задача;диспетчер;процессор;память;диск;сеть;process;task;manager;cpu;"
+"memory;disk;network;"
 
 #: data/io.github.makarov_mm.Pulse.metainfo.xml.in:9
 msgid "Mykhailo Makarov"
@@ -71,7 +73,7 @@ msgid "{0}/s"
 msgstr "{0}/с"
 
 #. Translators: put your name here, one translator per line.
-#: src/main.rs:47
+#: src/main.rs:48
 msgid "translator-credits"
 msgstr "Михаил Макаров"
 
@@ -119,97 +121,97 @@ msgstr "Прослушивание"
 msgid "Closing"
 msgstr "Закрывается"
 
-#: src/window.rs:39 src/ui/process_list.rs:223
+#: src/window.rs:40 src/ui/process_list.rs:223
 msgid "CPU"
 msgstr "ЦП"
 
-#: src/window.rs:40 src/ui/process_list.rs:230
+#: src/window.rs:41 src/ui/process_list.rs:230
 msgid "Memory"
 msgstr "Память"
 
-#: src/window.rs:41 src/ui/process_list.rs:237
+#: src/window.rs:42 src/ui/process_list.rs:237
 msgid "Disk"
 msgstr "Диск"
 
-#: src/window.rs:42
+#: src/window.rs:43
 msgid "Network"
 msgstr "Сеть"
 
-#: src/window.rs:62
+#: src/window.rs:63
 msgid "Processes"
 msgstr "Процессы"
 
-#: src/window.rs:66
+#: src/window.rs:67
 msgid "Devices"
 msgstr "Устройства"
 
-#: src/window.rs:73
+#: src/window.rs:74
 msgid "Connections"
 msgstr "Соединения"
 
-#: src/window.rs:79
+#: src/window.rs:80
 msgid "Disk Space"
 msgstr "Место на диске"
 
-#: src/window.rs:85
+#: src/window.rs:86
 msgid "Startup"
 msgstr "Автозапуск"
 
-#: src/window.rs:113
+#: src/window.rs:114
 msgid "Search by name, PID, user or command"
 msgstr "Поиск по имени, PID, пользователю или команде"
 
-#: src/window.rs:127
+#: src/window.rs:128
 msgid "Search"
 msgstr "Поиск"
 
-#: src/window.rs:136
+#: src/window.rs:137
 msgid "End Process"
 msgstr "Завершить процесс"
 
-#: src/window.rs:140
+#: src/window.rs:141
 msgid "Show as _Tree"
 msgstr "Показывать _деревом"
 
-#: src/window.rs:141
+#: src/window.rs:142
 msgid "Show _Kernel Threads"
 msgstr "Показывать потоки _ядра"
 
-#: src/window.rs:142
+#: src/window.rs:143
 msgid "_About Pulse"
 msgstr "_О приложении Pulse"
 
-#: src/window.rs:145
+#: src/window.rs:146
 msgid "Main Menu"
 msgstr "Главное меню"
 
-#: src/window.rs:351
+#: src/window.rs:368
 msgid "{0} process"
 msgid_plural "{0} processes"
 msgstr[0] "{0} процесс"
 msgstr[1] "{0} процесса"
 msgstr[2] "{0} процессов"
 
-#: src/window.rs:352
+#: src/window.rs:369
 msgid "{0} thread"
 msgid_plural "{0} threads"
 msgstr[0] "{0} поток"
 msgstr[1] "{0} потока"
 msgstr[2] "{0} потоков"
 
-#: src/window.rs:361
+#: src/window.rs:378
 msgid "{0} of {1}"
 msgstr "{0} из {1}"
 
-#: src/window.rs:374
+#: src/window.rs:391
 msgid "Read {0} · Write {1}"
 msgstr "Чтение {0} · Запись {1}"
 
-#: src/window.rs:393
+#: src/window.rs:410
 msgid "End “{0}”?"
 msgstr "Завершить «{0}»?"
 
-#: src/window.rs:395
+#: src/window.rs:412
 msgid ""
 "Process {0} will be asked to exit. Force Stop ends it at once, without "
 "letting it save anything."
@@ -217,19 +219,19 @@ msgstr ""
 "Процессу {0} будет отправлена просьба завершиться. «Остановить "
 "принудительно» завершает его сразу, не давая ничего сохранить."
 
-#: src/window.rs:400
+#: src/window.rs:417
 msgid "_Cancel"
 msgstr "_Отмена"
 
-#: src/window.rs:401
+#: src/window.rs:418
 msgid "_Force Stop"
 msgstr "Остановить _принудительно"
 
-#: src/window.rs:402
+#: src/window.rs:419
 msgid "_End Process"
 msgstr "_Завершить процесс"
 
-#: src/window.rs:415
+#: src/window.rs:432
 msgid "Could not end “{0}”: {1}"
 msgstr "Не удалось завершить «{0}»: {1}"
 

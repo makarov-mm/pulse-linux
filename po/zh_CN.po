@@ -1,0 +1,439 @@
+# Chinese (China) translation for Pulse.
+# This file is distributed under the same license as the Pulse package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pulse\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-26 00:33+0100\n"
+"PO-Revision-Date: 2026-11-25 23:38+0100\n"
+"Last-Translator: Automatically translated\n"
+"Language-Team: Chinese (China)\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:4
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:4
+msgid "Pulse"
+msgstr "Pulse"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:5
+msgid "System Monitor"
+msgstr "系统监视器"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:6
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:5
+msgid "Watch processes and system resources"
+msgstr "查看进程和系统资源"
+
+#: data/io.github.makarov_mm.Pulse.desktop.in:11
+msgid "process;task;manager;cpu;memory;disk;network;"
+msgstr "进程;任务;管理器;处理器;内存;磁盘;网络;process;cpu;"
+
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:9
+msgid "Mykhailo Makarov"
+msgstr "Mykhailo Makarov"
+
+#: data/io.github.makarov_mm.Pulse.metainfo.xml.in:12
+msgid ""
+"Pulse shows processor, memory, disk and network load together with the "
+"processes behind it."
+msgstr "Pulse 显示处理器、内存、磁盘和网络的负载，以及造成这些负载的进程。"
+
+#: src/format.rs:8
+msgid "B"
+msgstr "B"
+
+#: src/format.rs:8
+msgid "KiB"
+msgstr "KiB"
+
+#: src/format.rs:8
+msgid "MiB"
+msgstr "MiB"
+
+#: src/format.rs:8
+msgid "GiB"
+msgstr "GiB"
+
+#: src/format.rs:8
+msgid "TiB"
+msgstr "TiB"
+
+#: src/format.rs:52
+msgid "{0}/s"
+msgstr "{0}/秒"
+
+#. Translators: put your name here, one translator per line.
+#: src/main.rs:48
+msgid "translator-credits"
+msgstr ""
+
+#: src/telemetry/sockets.rs:116
+msgid "Established"
+msgstr "已建立"
+
+#: src/telemetry/sockets.rs:117
+msgid "SYN sent"
+msgstr "已发送 SYN"
+
+#: src/telemetry/sockets.rs:118
+msgid "SYN received"
+msgstr "已收到 SYN"
+
+#: src/telemetry/sockets.rs:119
+msgid "FIN wait 1"
+msgstr "FIN 等待 1"
+
+#: src/telemetry/sockets.rs:120
+msgid "FIN wait 2"
+msgstr "FIN 等待 2"
+
+#: src/telemetry/sockets.rs:121
+msgid "Time wait"
+msgstr "超时等待"
+
+#: src/telemetry/sockets.rs:122
+msgid "Closed"
+msgstr "已关闭"
+
+#: src/telemetry/sockets.rs:123
+msgid "Close wait"
+msgstr "等待关闭"
+
+#: src/telemetry/sockets.rs:124
+msgid "Last ACK"
+msgstr "最后 ACK"
+
+#: src/telemetry/sockets.rs:125
+msgid "Listening"
+msgstr "监听中"
+
+#: src/telemetry/sockets.rs:126
+msgid "Closing"
+msgstr "正在关闭"
+
+#: src/window.rs:40 src/ui/process_list.rs:223
+msgid "CPU"
+msgstr "处理器"
+
+#: src/window.rs:41 src/ui/process_list.rs:230
+msgid "Memory"
+msgstr "内存"
+
+#: src/window.rs:42 src/ui/process_list.rs:237
+msgid "Disk"
+msgstr "磁盘"
+
+#: src/window.rs:43
+msgid "Network"
+msgstr "网络"
+
+#: src/window.rs:63
+msgid "Processes"
+msgstr "进程"
+
+#: src/window.rs:67
+msgid "Devices"
+msgstr "设备"
+
+#: src/window.rs:74
+msgid "Connections"
+msgstr "连接"
+
+#: src/window.rs:80
+msgid "Disk Space"
+msgstr "磁盘空间"
+
+#: src/window.rs:86
+msgid "Startup"
+msgstr "开机启动"
+
+#: src/window.rs:114
+msgid "Search by name, PID, user or command"
+msgstr "按名称、PID、用户或命令搜索"
+
+#: src/window.rs:128
+msgid "Search"
+msgstr "搜索"
+
+#: src/window.rs:137
+msgid "End Process"
+msgstr "结束进程"
+
+#: src/window.rs:141
+msgid "Show as _Tree"
+msgstr "以树状显示(_T)"
+
+#: src/window.rs:142
+msgid "Show _Kernel Threads"
+msgstr "显示内核线程(_K)"
+
+#: src/window.rs:143
+msgid "_About Pulse"
+msgstr "关于 Pulse(_A)"
+
+#: src/window.rs:146
+msgid "Main Menu"
+msgstr "主菜单"
+
+#: src/window.rs:368
+msgid "{0} process"
+msgid_plural "{0} processes"
+msgstr[0] "{0} 个进程"
+
+#: src/window.rs:369
+msgid "{0} thread"
+msgid_plural "{0} threads"
+msgstr[0] "{0} 个线程"
+
+#: src/window.rs:378
+msgid "{0} of {1}"
+msgstr "{0}，共 {1}"
+
+#: src/window.rs:391
+msgid "Read {0} · Write {1}"
+msgstr "读取 {0} · 写入 {1}"
+
+#: src/window.rs:410
+msgid "End “{0}”?"
+msgstr "结束“{0}”？"
+
+#: src/window.rs:412
+msgid ""
+"Process {0} will be asked to exit. Force Stop ends it at once, without "
+"letting it save anything."
+msgstr "将请求进程 {0} 退出。“强制停止”会立即结束它，不给它保存任何内容的机会。"
+
+#: src/window.rs:417
+msgid "_Cancel"
+msgstr "取消(_C)"
+
+#: src/window.rs:418
+msgid "_Force Stop"
+msgstr "强制停止(_F)"
+
+#: src/window.rs:419
+msgid "_End Process"
+msgstr "结束进程(_E)"
+
+#: src/window.rs:432
+msgid "Could not end “{0}”: {1}"
+msgstr "无法结束“{0}”：{1}"
+
+#: src/ui/connections_page.rs:121
+msgid "Process"
+msgstr "进程"
+
+#: src/ui/connections_page.rs:123 src/ui/process_details.rs:66
+#: src/ui/process_list.rs:217
+msgid "PID"
+msgstr "PID"
+
+#: src/ui/connections_page.rs:124
+msgid "Protocol"
+msgstr "协议"
+
+#: src/ui/connections_page.rs:125
+msgid "Local Address"
+msgstr "本地地址"
+
+#: src/ui/connections_page.rs:126
+msgid "Remote Address"
+msgstr "远程地址"
+
+#: src/ui/connections_page.rs:127 src/ui/process_details.rs:68
+msgid "State"
+msgstr "状态"
+
+#: src/ui/connections_page.rs:138
+msgid ""
+"Sockets of other users’ processes are listed without an owner unless Pulse "
+"runs as root."
+msgstr "除非以 root 身份运行 Pulse，否则其他用户进程的套接字将不显示所有者。"
+
+#: src/ui/devices_page.rs:96
+msgid "Processors"
+msgstr "处理器"
+
+#: src/ui/devices_page.rs:97
+msgid "Disks"
+msgstr "磁盘"
+
+#: src/ui/devices_page.rs:98
+msgid "Network Interfaces"
+msgstr "网络接口"
+
+#: src/ui/devices_page.rs:130
+msgid "CPU {0}"
+msgstr "处理器 {0}"
+
+#: src/ui/devices_page.rs:137
+msgid "Read"
+msgstr "读取"
+
+#: src/ui/devices_page.rs:137
+msgid "Write"
+msgstr "写入"
+
+#: src/ui/process_details.rs:23
+msgid "“{0}” has exited."
+msgstr "“{0}”已退出。"
+
+#: src/ui/process_details.rs:67 src/ui/process_list.rs:222
+msgid "User"
+msgstr "用户"
+
+#: src/ui/process_details.rs:69
+msgid "Parent"
+msgstr "父进程"
+
+#: src/ui/process_details.rs:70
+msgid "Started"
+msgstr "启动时间"
+
+#: src/ui/process_details.rs:71
+msgid "Nice Value"
+msgstr "Nice 值"
+
+#: src/ui/process_details.rs:72
+msgid "Open Files"
+msgstr "打开的文件"
+
+#: src/ui/process_details.rs:73
+msgid "Executable"
+msgstr "可执行文件"
+
+#: src/ui/process_details.rs:74
+msgid "Working Folder"
+msgstr "工作目录"
+
+#: src/ui/process_details.rs:76
+msgid "Command Line"
+msgstr "命令行"
+
+#: src/ui/process_details.rs:85
+msgid "Running"
+msgstr "运行中"
+
+#: src/ui/process_details.rs:86
+msgid "Sleeping"
+msgstr "睡眠"
+
+#: src/ui/process_details.rs:87
+msgid "Waiting for I/O"
+msgstr "等待 I/O"
+
+#: src/ui/process_details.rs:88
+msgid "Idle"
+msgstr "空闲"
+
+#: src/ui/process_details.rs:89
+msgid "Stopped"
+msgstr "已停止"
+
+#: src/ui/process_details.rs:90
+msgid "Zombie"
+msgstr "僵尸"
+
+#: src/ui/process_list.rs:211 src/ui/space_page.rs:494
+msgid "Name"
+msgstr "名称"
+
+#: src/ui/process_list.rs:244
+msgid "Threads"
+msgstr "线程"
+
+#: src/ui/space_page.rs:94
+msgid "{0} smaller file"
+msgid_plural "{0} smaller files"
+msgstr[0] "{0} 个较小的文件"
+
+#: src/ui/space_page.rs:96
+msgid "{0} (not fully readable)"
+msgstr "{0}（未能完整读取）"
+
+#: src/ui/space_page.rs:146
+msgid "Home"
+msgstr "主目录"
+
+#: src/ui/space_page.rs:146
+msgid "File System"
+msgstr "文件系统"
+
+#: src/ui/space_page.rs:149
+msgid "Folder to scan"
+msgstr "要扫描的文件夹"
+
+#: src/ui/space_page.rs:153
+msgid "Choose Folder…"
+msgstr "选择文件夹…"
+
+#: src/ui/space_page.rs:156 src/ui/space_page.rs:353
+msgid "Scan"
+msgstr "扫描"
+
+#: src/ui/space_page.rs:161
+msgid "Parent Folder"
+msgstr "上级文件夹"
+
+#: src/ui/space_page.rs:165
+msgid "Choose a folder and press Scan."
+msgstr "请选择文件夹，然后按“扫描”。"
+
+#: src/ui/space_page.rs:322
+msgid "Could not start the scan: {0}"
+msgstr "无法开始扫描：{0}"
+
+#: src/ui/space_page.rs:335
+msgid "Cancel"
+msgstr "取消"
+
+#: src/ui/space_page.rs:361
+msgid "Choose a Folder to Scan"
+msgstr "选择要扫描的文件夹"
+
+#: src/ui/space_page.rs:462
+msgid "Scanning…"
+msgstr "正在扫描…"
+
+#: src/ui/space_page.rs:463
+msgid "Cancelled"
+msgstr "已取消"
+
+#: src/ui/space_page.rs:464
+msgid "Some folders could not be read"
+msgstr "部分文件夹无法读取"
+
+#: src/ui/space_page.rs:518
+msgid "Size on Disk"
+msgstr "占用空间"
+
+#: src/ui/space_page.rs:553
+msgid "Share"
+msgstr "占比"
+
+#: src/ui/startup_page.rs:29
+msgid ""
+"Programs that start when you log in. A change applies to your account only."
+msgstr "登录时启动的程序。更改仅对您的账户生效。"
+
+#: src/ui/startup_page.rs:38
+msgid "No Startup Programs"
+msgstr "没有开机启动程序"
+
+#: src/ui/startup_page.rs:39
+msgid "Nothing is set to start when you log in."
+msgstr "没有设置登录时启动的程序。"
+
+#: src/ui/startup_page.rs:106
+msgid "Could not change “{0}”: {1}"
+msgstr "无法更改“{0}”：{1}"
+
+#: src/ui/treemap.rs:85
+msgid "{0} smaller item"
+msgid_plural "{0} smaller items"
+msgstr[0] "{0} 个较小的项目"
