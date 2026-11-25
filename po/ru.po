@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pulse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 23:38+0100\n"
+"POT-Creation-Date: 2026-11-25 23:42+0100\n"
 "PO-Revision-Date: 2026-11-25 23:38+0100\n"
 "Last-Translator: Mykhailo Makarov\n"
 "Language-Team: Russian\n"
@@ -119,6 +119,116 @@ msgstr "Прослушивание"
 msgid "Closing"
 msgstr "Закрывается"
 
+#: src/window.rs:34 src/ui/process_list.rs:188
+msgid "CPU"
+msgstr "ЦП"
+
+#: src/window.rs:35 src/ui/process_list.rs:195
+msgid "Memory"
+msgstr "Память"
+
+#: src/window.rs:36 src/ui/process_list.rs:202
+msgid "Disk"
+msgstr "Диск"
+
+#: src/window.rs:37
+msgid "Network"
+msgstr "Сеть"
+
+#: src/window.rs:52
+msgid "Processes"
+msgstr "Процессы"
+
+#: src/window.rs:56
+msgid "Devices"
+msgstr "Устройства"
+
+#: src/window.rs:63
+msgid "Connections"
+msgstr "Соединения"
+
+#: src/window.rs:69
+msgid "Disk Space"
+msgstr "Место на диске"
+
+#: src/window.rs:75
+msgid "Startup"
+msgstr "Автозапуск"
+
+#: src/window.rs:103
+msgid "Search by name, PID, user or command"
+msgstr "Поиск по имени, PID, пользователю или команде"
+
+#: src/window.rs:117
+msgid "Search"
+msgstr "Поиск"
+
+#: src/window.rs:126
+msgid "End Process"
+msgstr "Завершить процесс"
+
+#: src/window.rs:130
+msgid "Show _Kernel Threads"
+msgstr "Показывать потоки _ядра"
+
+#: src/window.rs:131
+msgid "_About Pulse"
+msgstr "_О приложении Pulse"
+
+#: src/window.rs:134
+msgid "Main Menu"
+msgstr "Главное меню"
+
+#: src/window.rs:289
+msgid "{0} process"
+msgid_plural "{0} processes"
+msgstr[0] "{0} процесс"
+msgstr[1] "{0} процесса"
+msgstr[2] "{0} процессов"
+
+#: src/window.rs:290
+msgid "{0} thread"
+msgid_plural "{0} threads"
+msgstr[0] "{0} поток"
+msgstr[1] "{0} потока"
+msgstr[2] "{0} потоков"
+
+#: src/window.rs:299
+msgid "{0} of {1}"
+msgstr "{0} из {1}"
+
+#: src/window.rs:312
+msgid "Read {0} · Write {1}"
+msgstr "Чтение {0} · Запись {1}"
+
+#: src/window.rs:331
+msgid "End “{0}”?"
+msgstr "Завершить «{0}»?"
+
+#: src/window.rs:333
+msgid ""
+"Process {0} will be asked to exit. Force Stop ends it at once, without "
+"letting it save anything."
+msgstr ""
+"Процессу {0} будет отправлена просьба завершиться. «Остановить "
+"принудительно» завершает его сразу, не давая ничего сохранить."
+
+#: src/window.rs:338
+msgid "_Cancel"
+msgstr "_Отмена"
+
+#: src/window.rs:339
+msgid "_Force Stop"
+msgstr "Остановить _принудительно"
+
+#: src/window.rs:340
+msgid "_End Process"
+msgstr "_Завершить процесс"
+
+#: src/window.rs:353
+msgid "Could not end “{0}”: {1}"
+msgstr "Не удалось завершить «{0}»: {1}"
+
 #: src/ui/connections_page.rs:121
 msgid "Process"
 msgstr "Процесс"
@@ -182,18 +292,6 @@ msgstr "Имя"
 #: src/ui/process_list.rs:187
 msgid "User"
 msgstr "Пользователь"
-
-#: src/ui/process_list.rs:188 src/window.rs:33
-msgid "CPU"
-msgstr "ЦП"
-
-#: src/ui/process_list.rs:195 src/window.rs:34
-msgid "Memory"
-msgstr "Память"
-
-#: src/ui/process_list.rs:202 src/window.rs:35
-msgid "Disk"
-msgstr "Диск"
 
 #: src/ui/process_list.rs:209
 msgid "Threads"
@@ -270,103 +368,28 @@ msgstr "Размер на диске"
 msgid "Share"
 msgstr "Доля"
 
+#: src/ui/startup_page.rs:29
+msgid ""
+"Programs that start when you log in. A change applies to your account only."
+msgstr ""
+"Программы, которые запускаются при входе в систему. Изменение действует "
+"только для вашей учётной записи."
+
+#: src/ui/startup_page.rs:38
+msgid "No Startup Programs"
+msgstr "Нет программ автозапуска"
+
+#: src/ui/startup_page.rs:39
+msgid "Nothing is set to start when you log in."
+msgstr "При входе в систему ничего не запускается."
+
+#: src/ui/startup_page.rs:106
+msgid "Could not change “{0}”: {1}"
+msgstr "Не удалось изменить «{0}»: {1}"
+
 #: src/ui/treemap.rs:85
 msgid "{0} smaller item"
 msgid_plural "{0} smaller items"
 msgstr[0] "{0} элемент поменьше"
 msgstr[1] "{0} элемента поменьше"
 msgstr[2] "{0} элементов поменьше"
-
-#: src/window.rs:36
-msgid "Network"
-msgstr "Сеть"
-
-#: src/window.rs:49
-msgid "Processes"
-msgstr "Процессы"
-
-#: src/window.rs:53
-msgid "Devices"
-msgstr "Устройства"
-
-#: src/window.rs:60
-msgid "Connections"
-msgstr "Соединения"
-
-#: src/window.rs:66
-msgid "Disk Space"
-msgstr "Место на диске"
-
-#: src/window.rs:89
-msgid "Search by name, PID, user or command"
-msgstr "Поиск по имени, PID, пользователю или команде"
-
-#: src/window.rs:103
-msgid "Search"
-msgstr "Поиск"
-
-#: src/window.rs:110
-msgid "End Process"
-msgstr "Завершить процесс"
-
-#: src/window.rs:114
-msgid "Show _Kernel Threads"
-msgstr "Показывать потоки _ядра"
-
-#: src/window.rs:115
-msgid "_About Pulse"
-msgstr "_О приложении Pulse"
-
-#: src/window.rs:118
-msgid "Main Menu"
-msgstr "Главное меню"
-
-#: src/window.rs:273
-msgid "{0} process"
-msgid_plural "{0} processes"
-msgstr[0] "{0} процесс"
-msgstr[1] "{0} процесса"
-msgstr[2] "{0} процессов"
-
-#: src/window.rs:274
-msgid "{0} thread"
-msgid_plural "{0} threads"
-msgstr[0] "{0} поток"
-msgstr[1] "{0} потока"
-msgstr[2] "{0} потоков"
-
-#: src/window.rs:283
-msgid "{0} of {1}"
-msgstr "{0} из {1}"
-
-#: src/window.rs:296
-msgid "Read {0} · Write {1}"
-msgstr "Чтение {0} · Запись {1}"
-
-#: src/window.rs:315
-msgid "End “{0}”?"
-msgstr "Завершить «{0}»?"
-
-#: src/window.rs:317
-msgid ""
-"Process {0} will be asked to exit. Force Stop ends it at once, without "
-"letting it save anything."
-msgstr ""
-"Процессу {0} будет отправлена просьба завершиться. «Остановить "
-"принудительно» завершает его сразу, не давая ничего сохранить."
-
-#: src/window.rs:322
-msgid "_Cancel"
-msgstr "_Отмена"
-
-#: src/window.rs:323
-msgid "_Force Stop"
-msgstr "Остановить _принудительно"
-
-#: src/window.rs:324
-msgid "_End Process"
-msgstr "_Завершить процесс"
-
-#: src/window.rs:337
-msgid "Could not end “{0}”: {1}"
-msgstr "Не удалось завершить «{0}»: {1}"

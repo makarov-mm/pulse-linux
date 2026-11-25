@@ -10,11 +10,12 @@ use gtk::{gio, glib};
 use crate::format;
 use crate::i18n::{tr, trf, trn};
 use crate::telemetry::{self, Frame, Sampler, sockets};
-use crate::ui::{ConnectionsPage, DevicesPage, MetricCard, ProcessList, ProcessObject, SpacePage};
+use crate::ui::{ConnectionsPage, DevicesPage, MetricCard, ProcessList, ProcessObject, SpacePage, StartupPage};
 
 const SAMPLE_INTERVAL: Duration = Duration::from_secs(1);
 const PROCESSES_PAGE: &str = "processes";
 const CONNECTIONS_PAGE: &str = "connections";
+const STARTUP_PAGE: &str = "startup";
 /// Reading the socket tables walks every process's descriptors, so it runs less often than sampling.
 const SOCKET_INTERVAL: Duration = Duration::from_secs(2);
 
@@ -43,7 +44,9 @@ pub fn build(app: &adw::Application) -> adw::ApplicationWindow {
         card_row.append(card.widget());
     }
 
+    let toasts = adw::ToastOverlay::new();
     let space = SpacePage::new();
+    let startup = StartupPage::new(&toasts);
     let stack = adw::ViewStack::builder().vexpand(true).build();
     let table = gtk::Frame::builder().child(processes.widget()).build();
     stack.add_titled_with_icon(&table, Some(PROCESSES_PAGE), &tr("Processes"), "view-list-symbolic");
@@ -66,7 +69,19 @@ pub fn build(app: &adw::Application) -> adw::ApplicationWindow {
         &tr("Disk Space"),
         "drive-harddisk-symbolic",
     );
+    stack.add_titled_with_icon(
+        startup.widget(),
+        Some(STARTUP_PAGE),
+        &tr("Startup"),
+        "system-run-symbolic",
+    );
     follow_sockets(&stack, connections);
+    // The entries are read each time the page comes into view, which also picks up changes made elsewhere.
+    stack.connect_visible_child_name_notify(move |stack| {
+        if stack.visible_child_name().as_deref() == Some(STARTUP_PAGE) {
+            startup.refresh();
+        }
+    });
     // The page object owns the scan, so this handler keeps it alive for as long as the stack exists.
     stack.connect_destroy(move |_| {
         let _ = &space;
@@ -82,7 +97,6 @@ pub fn build(app: &adw::Application) -> adw::ApplicationWindow {
         .build();
     content.append(&card_row);
     content.append(&stack);
-    let toasts = adw::ToastOverlay::new();
     toasts.set_child(Some(&content));
 
     let search_entry = gtk::SearchEntry::builder()

@@ -3,9 +3,10 @@ data/io.github.makarov_mm.Pulse.metainfo.xml.in
 src/format.rs
 src/main.rs
 src/telemetry/sockets.rs
+src/window.rs
 src/ui/connections_page.rs
 src/ui/devices_page.rs
 src/ui/process_list.rs
 src/ui/space_page.rs
+src/ui/startup_page.rs
 src/ui/treemap.rs
-src/window.rs

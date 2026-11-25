@@ -6,6 +6,7 @@ mod metric_card;
 mod process_list;
 mod space_page;
 mod sparkline;
+mod startup_page;
 mod table;
 mod treemap;
 
@@ -14,3 +15,4 @@ pub use devices_page::DevicesPage;
 pub use metric_card::MetricCard;
 pub use process_list::{ProcessList, ProcessObject};
 pub use space_page::SpacePage;
+pub use startup_page::StartupPage;

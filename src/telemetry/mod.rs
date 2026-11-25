@@ -2,6 +2,7 @@
 
 //! Samples the system through procfs and sysfs. Nothing here touches the UI.
 
+pub mod autostart;
 mod procfs;
 pub mod sockets;
 pub mod space;
