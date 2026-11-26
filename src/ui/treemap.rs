@@ -48,6 +48,14 @@ struct State {
     activated: RefCell<Option<Activated>>,
 }
 
+impl State {
+    fn set_items(&self, items: Vec<Item>) {
+        // Until the next draw there is no geometry for this set of items.
+        self.tiles.borrow_mut().clear();
+        self.items.replace(items);
+    }
+}
+
 /// Shows items as rectangles whose areas are proportional to their sizes.
 pub struct Treemap {
     area: gtk::DrawingArea,
@@ -80,7 +88,10 @@ impl Treemap {
                     return false;
                 };
                 let text = match index {
-                    Some(index) => format!("{}\n{}", items[index].label, format::bytes(items[index].size as f64)),
+                    Some(index) => {
+                        let Some(item) = items.get(index) else { return false };
+                        format!("{}\n{}", item.label, format::bytes(item.size as f64))
+                    }
                     None => trn(
                         "{0} smaller item",
                         "{0} smaller items",
@@ -111,7 +122,7 @@ impl Treemap {
     }
 
     pub fn set_items(&self, items: Vec<Item>) {
-        self.state.items.replace(items);
+        self.state.set_items(items);
         self.area.queue_draw();
     }
 
@@ -265,6 +276,20 @@ fn draw(area: &gtk::DrawingArea, context: &cairo::Context, items: &[Item], tiles
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn changing_folders_invalidates_hit_targets_before_the_next_draw() {
+        let state = State::default();
+        state.set_items(vec![Item {
+            label: "old".into(),
+            size: 100,
+            folder: true,
+        }]);
+        state.tiles.replace(tiles(&state.items.borrow(), 100.0, 100.0));
+        assert!(hit(&state.tiles.borrow(), 50.0, 50.0).is_some());
+        state.set_items(Vec::new());
+        assert!(hit(&state.tiles.borrow(), 50.0, 50.0).is_none());
+    }
 
     #[test]
     fn rectangles_fill_the_bounds_in_proportion() {

@@ -2,7 +2,6 @@
 
 use std::cell::{Cell as StdCell, RefCell};
 use std::collections::{HashMap, HashSet};
-use std::rc::Rc;
 
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -47,7 +46,7 @@ mod imp {
         kernel: Cell<bool>,
         /// Everything the search box matches against.
         #[property(get, set)]
-        search: RefCell<String>,
+        pub(super) search: RefCell<String>,
         /// Whether the table is a tree. Rows without children then leave room for the arrow of their siblings.
         #[property(get, set)]
         in_tree: Cell<bool>,
@@ -79,14 +78,7 @@ impl ProcessObject {
     fn new(sample: &ProcessSample) -> Self {
         let object: Self = glib::Object::builder()
             .property("pid", sample.key.pid)
-            .property("name", &sample.name)
-            .property("user", &*sample.user)
-            .property("command", tooltip(&sample.command))
             .property("kernel", sample.kernel)
-            .property(
-                "search",
-                format!("{} {} {} {}", sample.name, sample.key.pid, sample.user, sample.command),
-            )
             .build();
         object.imp().start_time.set(sample.key.start_time);
         object.imp().children.replace(Some(gio::ListStore::new::<Self>()));
@@ -115,7 +107,7 @@ impl ProcessObject {
     }
 
     /// Only values that changed are set, so unchanged cells are not redrawn.
-    fn refresh(&self, sample: &ProcessSample) {
+    fn refresh(&self, sample: &ProcessSample) -> bool {
         // A process whose parent exits is adopted by another one.
         self.imp().parent.set(sample.parent);
         let cpu = sample.cpu.unwrap_or(-1.0);
@@ -132,10 +124,22 @@ impl ProcessObject {
         if self.disk() != disk {
             self.set_disk(disk);
         }
-        // A process can rename itself (prctl, exec).
-        if self.name() != sample.name {
+        // Compare the full command, including the part omitted from the tooltip.
+        let search = format!("{} {} {} {}", sample.name, sample.key.pid, sample.user, sample.command);
+        let name_changed = self.name() != sample.name;
+        let user_changed = self.user() != sample.user.as_ref();
+        if !name_changed && !user_changed && *self.imp().search.borrow() == search {
+            return false;
+        }
+        if name_changed {
             self.set_name(sample.name.as_str());
         }
+        if user_changed {
+            self.set_user(sample.user.as_ref());
+        }
+        self.set_command(tooltip(&sample.command));
+        self.set_search(search);
+        true
     }
 }
 
@@ -159,9 +163,13 @@ fn tooltip(command: &str) -> String {
 pub struct ProcessList {
     root: gtk::ScrolledWindow,
     view: gtk::ColumnView,
-    /// The top level: every process in the flat table, the ones without a listed parent in the tree.
+    /// Top-level processes in the tree.
     store: gio::ListStore,
-    tree: Rc<StdCell<bool>>,
+    all: gio::ListStore,
+    flat_rows: gtk::TreeListModel,
+    tree_rows: gtk::TreeListModel,
+    filtered: gtk::FilterListModel,
+    tree: StdCell<bool>,
     search: gtk::StringFilter,
     /// Hides kernel threads while it is part of `filters`.
     user_only: gtk::BoolFilter,
@@ -185,14 +193,15 @@ impl ProcessList {
         let filters = gtk::EveryFilter::new();
         filters.append(search.clone());
         filters.append(user_only.clone());
-        // The table always shows tree rows. While the tree is off no row has children, which makes it a flat list.
-        let tree = Rc::new(StdCell::new(false));
-        let rows = gtk::TreeListModel::new(store.clone(), false, true, |item| {
+        // Search uses every process, while the separate tree keeps its expansion state.
+        let all = gio::ListStore::new::<ProcessObject>();
+        let flat_rows = gtk::TreeListModel::new(all.clone(), false, false, |_| None);
+        let tree_rows = gtk::TreeListModel::new(store.clone(), false, true, |item| {
             let process = item.downcast_ref::<ProcessObject>()?;
             process.imp().expandable.get().then(|| process.children().upcast())
         });
-        let filtered = gtk::FilterListModel::new(Some(rows), Some(filters.clone()));
-        let sorted = gtk::SortListModel::new(Some(filtered), None::<gtk::Sorter>);
+        let filtered = gtk::FilterListModel::new(Some(flat_rows.clone()), Some(filters.clone()));
+        let sorted = gtk::SortListModel::new(Some(filtered.clone()), None::<gtk::Sorter>);
         let selection = gtk::SingleSelection::builder()
             .model(&sorted)
             .autoselect(false)
@@ -266,7 +275,11 @@ impl ProcessList {
             root,
             view,
             store,
-            tree,
+            all,
+            flat_rows,
+            tree_rows,
+            filtered,
+            tree: StdCell::new(false),
             search,
             user_only,
             filters,
@@ -284,16 +297,28 @@ impl ProcessList {
     pub fn update(&self, processes: &[ProcessSample]) {
         let mut objects = self.objects.borrow_mut();
         let mut alive = HashSet::with_capacity(processes.len());
+        let mut search_changed = false;
+        let mut added = Vec::new();
         for sample in processes {
             alive.insert(sample.key);
             match objects.get(&sample.key) {
-                Some(object) => object.refresh(sample),
+                Some(object) => search_changed |= object.refresh(sample),
                 None => {
-                    objects.insert(sample.key, ProcessObject::new(sample));
+                    let object = ProcessObject::new(sample);
+                    added.push(object.clone());
+                    objects.insert(sample.key, object);
                 }
             }
         }
+        if !added.is_empty() {
+            self.all.extend_from_slice(&added);
+        }
         if objects.len() != alive.len() {
+            self.all.retain(|object| {
+                object
+                    .downcast_ref::<ProcessObject>()
+                    .is_some_and(|row| alive.contains(&row.key()))
+            });
             objects.retain(|key, object| {
                 let keep = alive.contains(key);
                 if !keep {
@@ -304,6 +329,9 @@ impl ProcessList {
         }
         let selected = self.selected().map(|process| process.key());
         self.arrange(&objects);
+        if search_changed && self.search.search().is_some_and(|text| !text.is_empty()) {
+            self.search.changed(gtk::FilterChange::Different);
+        }
         self.reselect(selected);
         // Sort models do not watch item properties, so the new values are announced here.
         if let Some(sorter) = self.view.sorter() {
@@ -312,7 +340,10 @@ impl ProcessList {
     }
 
     pub fn set_search(&self, text: &str) {
+        let selected = self.selected().map(|process| process.key());
         self.search.set_search(Some(text));
+        self.choose_model();
+        self.reselect(selected);
     }
 
     pub fn set_show_kernel_threads(&self, show: bool) {
@@ -329,25 +360,43 @@ impl ProcessList {
         if self.tree.replace(tree) != tree {
             let selected = self.selected().map(|process| process.key());
             self.arrange(&self.objects.borrow());
+            self.choose_model();
             self.reselect(selected);
+        }
+    }
+
+    fn showing_tree(&self) -> bool {
+        self.tree.get() && self.search.search().is_none_or(|text| text.is_empty())
+    }
+
+    fn choose_model(&self) {
+        let tree = self.showing_tree();
+        let model = if tree { &self.tree_rows } else { &self.flat_rows };
+        if self.filtered.model().as_ref() != Some(model.upcast_ref()) {
+            for row in self.objects.borrow().values() {
+                row.set_in_tree(tree);
+            }
+            self.filtered.set_model(Some(model));
         }
     }
 
     /// Puts every row into the list it belongs to: the children of its parent in the tree,
     /// the top level otherwise. Rows already in place are left alone.
     fn arrange(&self, objects: &HashMap<ProcessKey, ProcessObject>) {
-        let mut parents: HashMap<i32, (&ProcessObject, bool)> = HashMap::new();
-        if self.tree.get() {
-            parents.extend(objects.values().map(|object| (object.pid(), (object, false))));
-            for object in objects.values() {
-                if let Some((_, has_children)) = parents.get_mut(&object.imp().parent.get()) {
-                    *has_children = true;
-                }
+        if !self.tree.get() {
+            return;
+        }
+        let tree = self.showing_tree();
+        let mut parents: HashMap<i32, (&ProcessObject, bool)> =
+            objects.values().map(|object| (object.pid(), (object, false))).collect();
+        for object in objects.values() {
+            if let Some((_, has_children)) = parents.get_mut(&object.imp().parent.get()) {
+                *has_children = true;
             }
         }
         for object in objects.values() {
-            if object.in_tree() != self.tree.get() {
-                object.set_in_tree(self.tree.get());
+            if object.in_tree() != tree {
+                object.set_in_tree(tree);
             }
             let state = object.imp();
             let container = match parents.get(&state.parent.get()) {
@@ -409,6 +458,67 @@ fn process_of(row: Option<glib::Object>) -> Option<ProcessObject> {
 
 fn process_at(selection: &gtk::SingleSelection, position: u32) -> Option<ProcessObject> {
     process_of(selection.item(position))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn sample(pid: i32, parent: i32, name: &str) -> ProcessSample {
+        ProcessSample {
+            key: ProcessKey { pid, start_time: 1 },
+            parent,
+            name: name.into(),
+            user: "user".into(),
+            command: name.into(),
+            kernel: false,
+            cpu: None,
+            memory: 0,
+            disk: None,
+            threads: 1,
+        }
+    }
+
+    #[test]
+    fn renamed_process_updates_the_search_text_and_tooltip() {
+        let mut sample = sample(41, 1, "old");
+        let object = ProcessObject::new(&sample);
+        sample.name = "new".into();
+        sample.user = "other".into();
+        sample.command = format!("new {} first", "x".repeat(500));
+        assert!(object.refresh(&sample));
+        assert_eq!(object.name(), "new");
+        assert_eq!(object.user(), "other");
+        assert_eq!(object.command(), tooltip(&sample.command));
+        sample.command.push_str(" second");
+        assert!(object.refresh(&sample));
+        assert!(object.search().ends_with("first second"));
+        assert!(!object.refresh(&sample));
+    }
+
+    #[test]
+    #[ignore = "requires a GTK display"]
+    fn search_finds_collapsed_children_and_refilters_live_changes() {
+        gtk::init().unwrap();
+        let list = ProcessList::new();
+        let parent = sample(41, 0, "parent");
+        let mut child = sample(42, 41, "child");
+        list.update(&[parent.clone(), child.clone()]);
+        list.set_tree(true);
+        let branch = list.tree_rows.row(0).unwrap();
+        branch.set_expanded(false);
+        assert_eq!(list.selection.n_items(), 1);
+        list.set_search("42");
+        assert_eq!(process_at(&list.selection, 0).unwrap().pid(), 42);
+        list.set_search("fresh-argument");
+        assert_eq!(list.selection.n_items(), 0);
+        child.command = "program fresh-argument".into();
+        list.update(&[parent, child]);
+        assert_eq!(process_at(&list.selection, 0).unwrap().pid(), 42);
+        list.set_search("");
+        assert!(!branch.is_expanded());
+        assert_eq!(list.selection.n_items(), 1);
+    }
 }
 
 fn property(name: &str) -> gtk::PropertyExpression {

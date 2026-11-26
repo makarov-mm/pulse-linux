@@ -36,7 +36,7 @@ pub struct ProcessSample {
     pub name: String,
     pub user: Arc<str>,
     /// The command line, or the bracketed name for a kernel thread.
-    pub command: Arc<str>,
+    pub command: String,
     pub kernel: bool,
     /// Share of all logical processors, 0–100. `None` until two samples exist.
     pub cpu: Option<f64>,
@@ -81,7 +81,6 @@ pub struct Frame {
 struct Known {
     cpu_ticks: u64,
     io: Option<Transfer>,
-    command: Arc<str>,
 }
 
 #[derive(Default)]
@@ -155,22 +154,21 @@ impl Sampler {
                 let written = now.outgoing.checked_sub(before.outgoing)?;
                 Some((read + written) as f64 / seconds)
             });
-            // The command line is read once: it rarely changes and costs a file read per process.
-            let command = known.map(|known| known.command).unwrap_or_else(|| {
-                let line = procfs::command_line(stat.key.pid);
-                if line.is_empty() {
-                    format!("[{}]", stat.name).into()
-                } else {
-                    line.into()
-                }
-            });
+            // exec preserves both PID and start time, even if the new binary has the same name.
+            let mut command = if stat.kernel {
+                String::new()
+            } else {
+                procfs::command_line(stat.key.pid)
+            };
+            if command.is_empty() {
+                command = format!("[{}]", stat.name);
+            }
 
             current.insert(
                 stat.key,
                 Known {
                     cpu_ticks: stat.cpu_ticks,
                     io: stat.io,
-                    command: command.clone(),
                 },
             );
             frame.processes.push(ProcessSample {

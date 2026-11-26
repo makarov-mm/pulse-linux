@@ -180,8 +180,8 @@ pub struct ProcessInfo {
 /// Reads the details of one process instance. `None` when it has exited or its PID was reused.
 pub fn info(key: ProcessKey) -> Option<ProcessInfo> {
     let directory = format!("/proc/{}", key.pid);
-    let stat = fs::read_to_string(format!("{directory}/stat")).ok()?;
-    let fields: Vec<&str> = stat.rsplit_once(')')?.1.split_ascii_whitespace().collect();
+    let stat = fs::read(format!("{directory}/stat")).ok()?;
+    let (_, fields) = stat_fields(&stat)?;
     // As in `process`, field N of proc(5) is at index N - 3.
     let field = |number: usize| fields.get(number - 3).copied();
     if field(22)?.parse::<u64>().ok()? != key.start_time {
@@ -222,22 +222,29 @@ pub fn command_line(pid: i32) -> String {
     String::from_utf8_lossy(&raw).into_owned()
 }
 
+/// The comm field can contain parentheses and arbitrary bytes. The remaining fields are ASCII.
+fn stat_fields(stat: &[u8]) -> Option<(&[u8], Vec<&str>)> {
+    let start = stat.iter().position(|&byte| byte == b'(')? + 1;
+    let end = stat.iter().rposition(|&byte| byte == b')')?;
+    let name = stat.get(start..end)?;
+    let fields = std::str::from_utf8(&stat[end + 1..])
+        .ok()?
+        .split_ascii_whitespace()
+        .collect();
+    Some((name, fields))
+}
+
 fn process(pid: i32) -> Option<ProcessStat> {
     let directory = format!("/proc/{pid}");
-    let stat = fs::read_to_string(format!("{directory}/stat")).ok()?;
-    // The name sits in parentheses and may itself contain spaces and parentheses,
-    // so the numbered fields are found from the last closing one.
-    let (head, tail) = stat.rsplit_once(')')?;
-    let name = head.split_once('(')?.1.to_owned();
-    // `tail` starts at field 3 (state), so field N of proc(5) is at index N - 3.
-    let fields: Vec<&str> = tail.split_ascii_whitespace().collect();
+    let stat = fs::read(format!("{directory}/stat")).ok()?;
+    let (name, fields) = stat_fields(&stat)?;
     let number = |field: usize| fields.get(field - 3)?.parse::<u64>().ok();
     Some(ProcessStat {
         key: ProcessKey {
             pid,
             start_time: number(22)?,
         },
-        name,
+        name: String::from_utf8_lossy(name).into_owned(),
         parent: number(4)? as i32,
         // The directory belongs to the effective user of the process.
         uid: fs::metadata(&directory).ok()?.uid(),
@@ -259,4 +266,17 @@ fn process_io(directory: &str) -> Option<Transfer> {
         incoming: field("read_bytes:")?,
         outgoing: field("write_bytes:")?,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn stat_keeps_numeric_fields_after_a_non_utf8_name_with_parentheses() {
+        let (name, fields) = stat_fields(b"42 (work) (\xd0) S 17 12\n").unwrap();
+        assert_eq!(name, b"work) (\xd0");
+        assert_eq!(fields, ["S", "17", "12"]);
+        assert!(stat_fields(b"42 )broken(").is_none());
+    }
 }

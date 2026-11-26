@@ -50,10 +50,30 @@ impl Locations {
             .map(|dir| dir.join(id))
             .find(|path| path.is_file())
     }
+
+    /// A user override containing only Hidden masks the whole system entry. Use the
+    /// underlying launch definition for display and when writing an enabled override.
+    fn definition(&self, id: &str, source: &Path) -> io::Result<(glib::KeyFile, bool)> {
+        let keys = load(source).ok_or(io::ErrorKind::InvalidData)?;
+        if launchable(&keys) {
+            return Ok((keys, false));
+        }
+        if source == self.user.join(id) && keys.has_key(GROUP, "Hidden").unwrap_or(false) {
+            let system = self.system.iter().map(|dir| dir.join(id)).find(|path| path.is_file());
+            if let Some(keys) = system.as_deref().and_then(load).filter(launchable) {
+                return Ok((keys, true));
+            }
+        }
+        Err(io::ErrorKind::InvalidData.into())
+    }
 }
 
-/// Every entry once, sorted by name.
+/// Entries applicable to this session, sorted by name.
 pub fn read(locations: &Locations) -> Vec<Entry> {
+    read_for_desktops(locations, &std::env::var("XDG_CURRENT_DESKTOP").unwrap_or_default())
+}
+
+fn read_for_desktops(locations: &Locations, desktops: &str) -> Vec<Entry> {
     let mut seen = HashSet::new();
     let mut entries = Vec::new();
     for directory in std::iter::once(&locations.user).chain(&locations.system) {
@@ -66,7 +86,9 @@ pub fn read(locations: &Locations) -> Vec<Entry> {
             if !id.ends_with(".desktop") || !seen.insert(id.clone()) {
                 continue;
             }
-            if let Some(entry) = load(&file.path()).and_then(|keys| describe(id, &keys)) {
+            if let Ok((keys, masked)) = locations.definition(&id, &file.path())
+                && let Some(entry) = describe(id, &keys, masked, desktops)
+            {
                 entries.push(entry);
             }
         }
@@ -81,8 +103,32 @@ fn load(path: &Path) -> Option<glib::KeyFile> {
     keys.load_from_file(path, flags).ok().map(|()| keys)
 }
 
-fn describe(id: String, keys: &glib::KeyFile) -> Option<Entry> {
-    if keys.string(GROUP, "Type").is_ok_and(|kind| kind != "Application") {
+fn launchable(keys: &glib::KeyFile) -> bool {
+    keys.string(GROUP, "Exec")
+        .is_ok_and(|command| !command.trim().is_empty())
+        || keys.boolean(GROUP, "DBusActivatable").unwrap_or(false)
+}
+
+fn describe(id: String, keys: &glib::KeyFile, masked: bool, desktops: &str) -> Option<Entry> {
+    let matches_desktop = |key| {
+        keys.string_list(GROUP, key).ok().map(|list| {
+            desktops
+                .split(':')
+                .filter(|name| !name.is_empty())
+                .any(|name| list.iter().any(|item| item.as_str() == name))
+        })
+    };
+    if keys.string(GROUP, "Type").is_ok_and(|kind| kind != "Application")
+        || matches_desktop("OnlyShowIn") == Some(false)
+        || matches_desktop("NotShowIn") == Some(true)
+    {
+        return None;
+    }
+    if let Ok(program) = keys.string(GROUP, "TryExec")
+        && !program.is_empty()
+        && ((!Path::new(program.as_str()).is_absolute() && program.contains('/'))
+            || glib::find_program_in_path(program.as_str()).is_none())
+    {
         return None;
     }
     let hidden = keys.boolean(GROUP, "Hidden").unwrap_or(false);
@@ -91,7 +137,7 @@ fn describe(id: String, keys: &glib::KeyFile) -> Option<Entry> {
     Some(Entry {
         name: name.unwrap_or_else(|_| id.trim_end_matches(".desktop").to_owned()),
         command: keys.string(GROUP, "Exec").map(String::from).unwrap_or_default(),
-        enabled: !hidden && !switched_off,
+        enabled: !masked && !hidden && !switched_off,
         id,
     })
 }
@@ -106,7 +152,7 @@ pub fn set_enabled(locations: &Locations, id: &str, enabled: bool) -> io::Result
         return Err(io::ErrorKind::InvalidInput.into());
     }
     let source = locations.find(id).ok_or(io::ErrorKind::NotFound)?;
-    let keys = load(&source).ok_or(io::ErrorKind::InvalidData)?;
+    let (keys, _) = locations.definition(id, &source)?;
     keys.set_boolean(GROUP, "Hidden", !enabled);
     if keys.has_key(GROUP, GNOME_ENABLED).unwrap_or(false) {
         keys.set_boolean(GROUP, GNOME_ENABLED, enabled);
@@ -189,5 +235,56 @@ mod tests {
             set_enabled(&locations, "missing.desktop", true).map_err(|e| e.kind()),
             Err(io::ErrorKind::NotFound)
         );
+    }
+
+    #[test]
+    fn a_minimal_mask_can_restore_the_highest_priority_system_definition() {
+        let mut locations = fixture("mask");
+        locations.system.push(locations.user.with_file_name("other-system"));
+        let id = "agent.desktop";
+        write(
+            &locations.system[0],
+            id,
+            "Name=First\nExec=first --agent\nOnlyShowIn=GNOME;\n",
+        );
+        write(&locations.system[1], id, "Name=Second\nExec=second\n");
+        fs::create_dir_all(&locations.user).unwrap();
+        let mask = locations.user.join(id);
+        // Also repair a mask left with Hidden=false by an earlier version.
+        for hidden in [true, false] {
+            fs::write(&mask, format!("[Desktop Entry]\nHidden={hidden}\n")).unwrap();
+            assert!(read_for_desktops(&locations, "KDE").is_empty());
+            let entries = read_for_desktops(&locations, "GNOME");
+            assert_eq!(entries.len(), 1);
+            assert!(!entries[0].enabled);
+            set_enabled(&locations, id, true).unwrap();
+            let restored = read_for_desktops(&locations, "GNOME");
+            assert!(restored[0].enabled);
+            assert_eq!(restored[0].command, "first --agent");
+            assert!(read_for_desktops(&locations, "KDE").is_empty());
+        }
+    }
+
+    #[test]
+    fn startup_respects_desktop_lists_and_try_exec() {
+        let locations = fixture("session");
+        let system = &locations.system[0];
+        write(system, "only.desktop", "Name=Only\nExec=app\nOnlyShowIn=GNOME;MATE;\n");
+        write(system, "except.desktop", "Name=Except\nExec=app\nNotShowIn=KDE;\n");
+        write(
+            system,
+            "missing.desktop",
+            "Exec=app\nTryExec=pulse-test-no-such-program-8dae39e0\n",
+        );
+        write(system, "present.desktop", "Name=Present\nExec=app\nTryExec=sh\n");
+        let names = |desktops| {
+            read_for_desktops(&locations, desktops)
+                .into_iter()
+                .map(|entry| entry.name)
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(names("Unity:GNOME"), ["Except", "Only", "Present"]);
+        assert_eq!(names("KDE"), ["Present"]);
+        assert_eq!(names(""), ["Except", "Present"]);
     }
 }
